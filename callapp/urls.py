@@ -5,6 +5,10 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
+    path("server/<int:id>/", views.server, name="server"),
+    path("channel/<int:id>/", views.channel, name="channel"),
+
+
 ]
 
 if settings.DEBUG:

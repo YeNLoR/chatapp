@@ -1,0 +1,7 @@
+:root {
+  --border-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
+}
+
+.border, .border-t, .border-b, .border-l, .border-r {
+  border-color: var(--border-color)
+}
