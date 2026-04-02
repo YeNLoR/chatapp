@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'callapp.apps.CallappConfig',
-    'django_cotton'
+    'django_cotton',
+    "lucide"
 ]
 
 MIDDLEWARE = [

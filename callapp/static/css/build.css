@@ -476,6 +476,36 @@
       }
     }
   }
+  .validator-hint {
+    @layer daisyui.l1.l2.l3 {
+      visibility: hidden;
+      margin-top: calc(0.25rem * 2);
+      font-size: 0.75rem;
+    }
+  }
+  .validator {
+    @layer daisyui.l1.l2.l3 {
+      &:user-valid, &:has(:user-valid) {
+        &, &:focus, &:checked, &[aria-checked="true"], &:focus-within {
+          --input-color: var(--color-success);
+        }
+      }
+      &:user-invalid, &:has(:user-invalid), &[aria-invalid]:not([aria-invalid="false"]), &:has([aria-invalid]:not([aria-invalid="false"])) {
+        &, &:focus, &:checked, &[aria-checked="true"], &:focus-within {
+          --input-color: var(--color-error);
+        }
+        & ~ .validator-hint {
+          visibility: visible;
+          color: var(--color-error);
+        }
+      }
+    }
+    &:user-invalid, &:has(:user-invalid), &[aria-invalid]:not([aria-invalid="false"]), &:has([aria-invalid]:not([aria-invalid="false"])) {
+      & ~ .validator-hint {
+        display: revert-layer;
+      }
+    }
+  }
   .input {
     @layer daisyui.l1.l2.l3 {
       cursor: text;
@@ -618,20 +648,30 @@
   .static {
     position: static;
   }
-  .mt-auto {
-    margin-top: auto;
+  .btn-active {
+    @layer daisyui.l1.l2 {
+      --btn-bg: var(--btn-color, var(--color-base-200));
+      @supports (color: color-mix(in lab, red, red)) {
+        --btn-bg: color-mix(in oklab, var(--btn-color, var(--color-base-200)), #000 7%);
+      }
+      --btn-shadow: 0 0 0 0 oklch(0% 0 0/0), 0 0 0 0 oklch(0% 0 0/0);
+      isolation: isolate;
+    }
   }
-  .mb-auto {
-    margin-bottom: auto;
+  .mt-2 {
+    margin-top: calc(var(--spacing) * 2);
   }
   .block {
     display: block;
   }
-  .contents {
-    display: contents;
-  }
   .flex {
     display: flex;
+  }
+  .hidden {
+    display: none;
+  }
+  .h-\[1em\] {
+    height: 1em;
   }
   .min-h-full {
     min-height: 100%;
@@ -645,11 +685,8 @@
   .min-w-75 {
     min-width: calc(var(--spacing) * 75);
   }
-  .min-w-full {
-    min-width: 100%;
-  }
-  .min-w-screen {
-    min-width: 100vw;
+  .shrink {
+    flex-shrink: 1;
   }
   .grow {
     flex-grow: 1;
@@ -657,23 +694,27 @@
   .flex-col {
     flex-direction: column;
   }
-  .flex-col-reverse {
-    flex-direction: column-reverse;
-  }
   .flex-row {
     flex-direction: row;
   }
-  .content-end {
-    align-content: flex-end;
+  .content-center {
+    align-content: center;
   }
-  .items-end {
-    align-items: flex-end;
+  .justify-center {
+    justify-content: center;
   }
   .justify-end {
     justify-content: flex-end;
   }
+  .self-center {
+    align-self: center;
+  }
   .rounded-full {
     border-radius: calc(infinity * 1px);
+  }
+  .border {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
   }
   .border-r {
     border-right-style: var(--tw-border-style);
@@ -681,6 +722,9 @@
   }
   .p-0 {
     padding: calc(var(--spacing) * 0);
+  }
+  .align-middle {
+    vertical-align: middle;
   }
   .text-base {
     font-size: var(--text-base);
@@ -694,8 +738,17 @@
     --tw-font-weight: var(--font-weight-medium);
     font-weight: var(--font-weight-medium);
   }
+  .opacity-50 {
+    opacity: 50%;
+  }
+  .opacity-60 {
+    opacity: 60%;
+  }
   .opacity-70 {
     opacity: 70%;
+  }
+  .opacity-80 {
+    opacity: 80%;
   }
   .btn-neutral {
     @layer daisyui.l1.l2.l3 {
