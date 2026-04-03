@@ -10,23 +10,7 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="flex flex-row">
-        <div id="serverList" class="flex flex-col min-h-screen border-r">
-            <ul class="menu p-0">
-                {% for item in user.servers.all%}
-                <li>
-                    <c-server-icon :server="item" />
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div id="channelList" class="flex flex-col min-h-screen border-r min-w-75">
-            {% include "channels.html" %}
-        </div>
-        <div id="messageList" class="flex grow">
-            {% block content %}
-            {% endblock %}
-        </div>
-    </div>
+{% block content %}
+{% endblock %}
 </body>
 </html>

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Server, Channel, Message
 from .forms import CustomUserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login
 
 def index(request):
     return render(request, "index.html")
@@ -19,11 +20,11 @@ def channel(request, id):
     else:
         return redirect("/")
     
-def login(request):
-    form = AuthenticationForm(request.POST or None)
+def login_view(request):
+    form = AuthenticationForm(request, data=request.POST or None)
     if request.method == "POST":
         if form.is_valid():
-            login(request, form.ger_user())
+            login(request, form.get_user())
             return redirect(to="/")
     context = {"form": form}
     template = (
@@ -37,8 +38,8 @@ def register(request):
     form = CustomUserCreationForm(request.POST or None)
     if request.method == "POST":
         if form.is_valid():
-            login(request, form.ger_user())
-            return redirect(to="/")
+            form.save()
+            return redirect(to="/login/")
     context = {"form": form}
     template = (
         "register.html"
