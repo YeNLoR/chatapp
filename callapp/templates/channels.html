@@ -1,7 +1,15 @@
 <ul class="menu p-0">
     {% for item in current_server.channels.all%}
     <li>
-        <a href="/channel/{{item.id}}/" class="text-base font-medium" hx-get="/channel/{{item.id}}/" hx-target="#messageList" hx-swap="innerHTML" hx-push-url="false">{{item.name}}</a>
+        <a
+            href="/channel/{{item.id}}/"
+            class="text-base font-medium"
+            hx-get="/channel/{{item.id}}/"
+            hx-target="#messageList"
+            hx-swap="innerHTML"
+            hx-push-url="false"
+            >{{item.name}}</a
+        >
     </li>
     {% endfor %}
 </ul>

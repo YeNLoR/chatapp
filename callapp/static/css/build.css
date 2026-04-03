@@ -664,17 +664,11 @@
   .block {
     display: block;
   }
-  .contents {
-    display: contents;
-  }
   .flex {
     display: flex;
   }
   .hidden {
     display: none;
-  }
-  .h-\[1em\] {
-    height: 1em;
   }
   .min-h-full {
     min-height: 100%;
@@ -697,9 +691,6 @@
   .min-w-full {
     min-width: 100%;
   }
-  .shrink {
-    flex-shrink: 1;
-  }
   .grow {
     flex-grow: 1;
   }
@@ -708,12 +699,6 @@
   }
   .flex-row {
     flex-direction: row;
-  }
-  .content-center {
-    align-content: center;
-  }
-  .items-center {
-    align-items: center;
   }
   .justify-center {
     justify-content: center;
@@ -738,9 +723,6 @@
     border-right-style: var(--tw-border-style);
     border-right-width: 1px;
   }
-  .object-center {
-    object-position: center;
-  }
   .p-0 {
     padding: calc(var(--spacing) * 0);
   }
@@ -759,9 +741,6 @@
   .pl-4 {
     padding-left: calc(var(--spacing) * 4);
   }
-  .align-middle {
-    vertical-align: middle;
-  }
   .text-base {
     font-size: var(--text-base);
     line-height: var(--tw-leading, var(--text-base--line-height));
@@ -777,14 +756,8 @@
   .opacity-50 {
     opacity: 50%;
   }
-  .opacity-60 {
-    opacity: 60%;
-  }
   .opacity-70 {
     opacity: 70%;
-  }
-  .opacity-80 {
-    opacity: 80%;
   }
   .btn-neutral {
     @layer daisyui.l1.l2.l3 {

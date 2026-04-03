@@ -1,61 +1,67 @@
-{% extends "base.html" %}{% load lucide %}
-{% block content %}
+{% extends "base.html" %}{% load lucide %} {% block content %}
 <div class="flex min-h-screen min-w-full justify-center">
-    <form action="/register/" method="post" class="self-center min-w-150 max-w-150 form pl-4 pr-4 pt-3 pb-3">
+    <form
+        action="/register/"
+        method="post"
+        class="self-center min-w-150 max-w-150 form pl-4 pr-4 pt-3 pb-3"
+    >
         <div class="flex flex-col p-4 border gap-1">
             {%csrf_token%}
             <label class="input validator min-w-full">
-            {% lucide "user" class="opacity-50" size="21" %}
-            <input
-                type="text"
-                required
-                placeholder="Kullanıcı Adı"
-                pattern="[A-Za-z][A-Za-z0-9\-]*"
-                minlength="3"
-                maxlength="30"
-                title="kelime 3 ile 30 karakter arasında olmalı, sadece harf, rakam veya tire içerebilir"
-                name="{{ form.username.html_name }}"
-                id="{{ form.username.html_name }}"
-                value="{{ form.username.value|default:''}}"
-            />
+                {% lucide "user" class="opacity-50" size="21" %}
+                <input
+                    type="text"
+                    required
+                    placeholder="Kullanıcı Adı"
+                    pattern="[A-Za-z][A-Za-z0-9\-]*"
+                    minlength="3"
+                    maxlength="30"
+                    title="kelime 3 ile 30 karakter arasında olmalı, sadece harf, rakam veya tire içerebilir"
+                    name="{{ form.username.html_name }}"
+                    id="{{ form.username.html_name }}"
+                    value="{{ form.username.value|default:''}}"
+                />
             </label>
             <p class="validator-hint hidden">
-            Kelime 3 ile 30 karakter arasında olmalı sadece harf, rakam veya tire içerebilir
+                Kelime 3 ile 30 karakter arasında olmalı sadece harf, rakam veya
+                tire içerebilir
             </p>
             <label class="input validator min-w-full mt-2">
-            {% lucide "key-square" class="opacity-50" size="21" %}
-            <input
-                type="password"
-                required
-                placeholder="Şifre"
-                minlength="8"
-                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                title="8 karakterden uzun olmalı, en az bir rakam, bir küçük harf ve bir büyük harf içermelidir"
-                name="{{ form.password1.html_name }}"
-                id="{{ form.password1.html_name }}"
-            />
+                {% lucide "key-square" class="opacity-50" size="21" %}
+                <input
+                    type="password"
+                    required
+                    placeholder="Şifre"
+                    minlength="8"
+                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                    title="8 karakterden uzun olmalı, en az bir rakam, bir küçük harf ve bir büyük harf içermelidir"
+                    name="{{ form.password1.html_name }}"
+                    id="{{ form.password1.html_name }}"
+                />
             </label>
             <p class="validator-hint hidden">
-            8 karakterden uzun olmalı en az bir rakam bir küçük harf ve bir büyük harf içermelidir
+                8 karakterden uzun olmalı en az bir rakam bir küçük harf ve bir
+                büyük harf içermelidir
             </p>
             <label class="input validator min-w-full mt-2">
-            {% lucide "key-square" class="opacity-50" size="21" %}
-            <input
-                type="password"
-                required
-                placeholder="Şifre Tekrar"
-                minlength="8"
-                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                title="8 karakterden uzun olmalı, en az bir rakam, bir küçük harf ve bir büyük harf içermelidir"
-                name="{{ form.password2.html_name }}"
-                id="{{ form.password2.html_name }}"
-            />
+                {% lucide "key-square" class="opacity-50" size="21" %}
+                <input
+                    type="password"
+                    required
+                    placeholder="Şifre Tekrar"
+                    minlength="8"
+                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                    title="8 karakterden uzun olmalı, en az bir rakam, bir küçük harf ve bir büyük harf içermelidir"
+                    name="{{ form.password2.html_name }}"
+                    id="{{ form.password2.html_name }}"
+                />
             </label>
             <p class="validator-hint hidden">
-            8 karakterden uzun olmalı en az bir rakam bir küçük harf ve bir büyük harf içermelidir
+                8 karakterden uzun olmalı en az bir rakam bir küçük harf ve bir
+                büyük harf içermelidir
             </p>
-            <br/>
-                <button type="submit" class="btn btn-active mt-2">Kayıt Ol</button>
+            <br />
+            <button type="submit" class="btn btn-active mt-2">Kayıt Ol</button>
         </div>
     </form>
 </div>

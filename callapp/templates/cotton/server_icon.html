@@ -1,5 +1,12 @@
 <c-vars server="" />
-<a href="/server/{{server.id}}" class="flex flex-col" hx-get="/server/{{server.id}}/" hx-target="#channelList" hx-swap="innerHTML" hx-push-url="false">
+<a
+    href="/server/{{server.id}}"
+    class="flex flex-col"
+    hx-get="/server/{{server.id}}/"
+    hx-target="#channelList"
+    hx-swap="innerHTML"
+    hx-push-url="false"
+>
     <c-avatar :img="server.img.url" />
     <span>{{server.name}}</span>
 </a>
