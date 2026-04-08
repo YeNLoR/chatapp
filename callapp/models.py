@@ -5,6 +5,7 @@ from django.db import models
 
 class User(AbstractUser):
     avatar = models.ImageField(upload_to="avatars/", default="stand.png")
+    friends = models.ManyToManyField("self", symmetrical=True)
 
 
 class Server(models.Model):

@@ -6,8 +6,14 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("server/<int:id>/", views.server, name="server"),
-    path("channel/<int:id>/", views.channel, name="channel"),
+    path("profile/", views.profile, name="profile"),
+    path("channel/<int:server_id>/", views.server, name="server"),
+    path("channel/<int:server_id>/<int:channel_id>/", views.channel, name="channel"),
+    path(
+        "channel/<int:server_id>/<int:channel_id>/message/",
+        views.message,
+        name="message",
+    ),
     path("login/", views.login_view, name="login"),
     path("register/", views.register, name="register"),
 ]

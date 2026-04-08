@@ -1,15 +1,20 @@
-<div class="flex flex-col justify-end min-h-full grow">
-    {% for item in current_channel.messages.all%}
-    <div class="flex flex-row">
-        <c-avatar :img="item.user.avatar.url" />
-        <div class="flex flex-col">
-            <p class="text-base leading-5 opacity-70">{{item.user.username}}</p>
-            <p class="text-base leading-5">{{item.message}}</p>
-        </div>
+{% partialdef content %}
+<div class="flex min-h-full grow flex-col justify-end">
+  {% for item in current_channel.messages.all%}
+  <div class="flex flex-row">
+    <c-avatar :img="item.user.avatar.url" />
+    <div class="flex flex-col">
+      <p class="text-base leading-5 opacity-70">{{item.user.username}}</p>
+      <p class="text-base leading-5">{{item.message}}</p>
     </div>
-    {% endfor %}
-    <form class="flex flex-row">
-        <textarea class="input grow"></textarea>
-        <button type="submit" class="btn btn-neutral">gönder</button>
-    </form>
+  </div>
+  {% endfor %}
+  <form class="flex flex-row" hx-post="message/">
+    <textarea
+      class="input grow"
+      name="{{ message_form.message.html_name }}"
+    ></textarea>
+    <button type="submit" class="btn btn-neutral">gönder</button>
+  </form>
 </div>
+{% endpartialdef %} {% partial content %}

@@ -6,10 +6,16 @@
   "author": "",
   "type": "commonjs",
   "main": "index.js",
-  "scripts": {"build": "npx @tailwindcss/cli -i app.css -o ../callapp/static/css/build.css --watch"},
+  "scripts": {
+    "build": "npx @tailwindcss/cli -i app.css -o ./callapp/static/css/build.css --watch"
+  },
   "dependencies": {
     "@tailwindcss/cli": "^4.2.2",
     "daisyui": "^5.5.19",
     "tailwindcss": "^4.2.2"
+  },
+  "devDependencies": {
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.2"
   }
 }

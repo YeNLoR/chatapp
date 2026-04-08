@@ -1,6 +1,6 @@
-{% partialdef content %}
+{% if friend_list %}
 <ul class="menu p-0">
-  {% for item in current_server.channels.all%}
+  {% for item in friend_list%}
   <li>
     <a
       href="/channel/{{item.server.id}}/{{item.id}}/"
@@ -9,9 +9,9 @@
       hx-target="#messageList"
       hx-swap="innerHTML"
       hx-push-url="true"
-      >{{item.name}}</a
+      >{{item.username}}</a
     >
   </li>
   {% endfor %}
 </ul>
-{% endpartialdef %}{% partial content %}
+{% endif %}

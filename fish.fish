@@ -14,7 +14,6 @@ else
     tmux new-window -a
     tmux new-window -a
     tmux send-keys -t 1 "python manage.py runserver" C-m
-    tmux send-keys -t 2 "cd tailwind" C-m
     tmux send-keys -t 2 "npm run build" C-m
     tmux select-window -t 3
     tmux attach-session -t $SESSION_NAME

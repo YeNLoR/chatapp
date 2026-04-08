@@ -1,17 +1,43 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} {% block content %} {% load lucide %}
 <div class="flex flex-row">
-    <div id="serverList" class="flex flex-col min-h-screen border-r">
-        <ul class="menu p-0">
-            {% for item in user.servers.all%}
-            <li>
-                <c-server-icon :server="item" />
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
-    <div id="channelList" class="flex flex-col min-h-screen border-r min-w-75">
-        {% include "channels.html" %}
-    </div>
-    <div id="messageList" class="flex grow"></div>
+  <div id="serverList" class="flex min-h-screen flex-col border-r">
+    <ul class="menu p-0">
+      <li>
+        <a
+          href="/profile/"
+          class="flex flex-col"
+          hx-get="/profile/"
+          hx-target="#channelList"
+          hx-swap="innerHTML"
+          hx-push-url="true"
+        >
+          {% lucide "user" size="40" %}
+          <span>Profil</span>
+        </a>
+      </li>
+      {% for item in user.servers.all%}
+      <li>
+        <c-server-icon :server="item" />
+      </li>
+      {% endfor %}
+      <li>
+        <a
+          href="/profile/"
+          class="flex flex-col"
+          hx-get=""
+          hx-target=""
+          hx-swap=""
+          hx-push-url=""
+        >
+          {% lucide "book-plus" size="40" %}
+          <span>ekle</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div id="channelList" class="flex min-h-screen min-w-75 flex-col border-r">
+    {% include "channels.html" %} {% include "profile.html" %}
+  </div>
+  <div id="messageList" class="flex grow">{% include "messages.html" %}</div>
 </div>
 {% endblock %}
