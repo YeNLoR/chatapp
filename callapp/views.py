@@ -1,5 +1,5 @@
-from webbrowser import get
-
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse
@@ -104,6 +104,16 @@ def message(request, server_id, channel_id):
         message.channel_id = channel_id
         message.user_id = request.user.id
         message.save()
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"chat_{channel_id}",
+            {
+                "type": "chat.message",
+                "message": message.message,
+                "username": request.user.username,
+                "src": request.user.avatar.url,
+            },
+        )
         return HttpResponse()
     print("hata")
     return HttpResponse()

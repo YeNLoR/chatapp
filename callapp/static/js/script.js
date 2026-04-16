@@ -1,4 +1,28 @@
 const messageTemplate = document.getElementById("messageTemplate");
+let chatSocket = null;
+
+function connectWebsocket() {
+  if (chatSocket) chatSocket.close();
+  const pathname = window.location.pathname;
+  console.log(pathname, pathname.split("/"));
+  if (pathname.split("/").length !== 5 || !pathname.startsWith("/channel")) {
+    return;
+  }
+  let channelID = pathname.split("/")[3];
+  chatSocket = new WebSocket(
+    "ws://" + window.location.host + "/ws/chat/" + channelID + "/",
+  );
+  chatSocket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    createMessage(data);
+  };
+}
+document.addEventListener("htmx:pushedIntoHistory", (event) => {
+  connectWebsocket();
+});
+window.onpopstate = connectWebsocket;
+connectWebsocket();
+
 function createMessage(data) {
   const clone = document.importNode(messageTemplate.content, true);
   let cloneImg = clone.querySelector("img");
@@ -10,21 +34,8 @@ function createMessage(data) {
   document.getElementById("messages").appendChild(clone);
 }
 
-const chatSocket = new WebSocket(
-  "ws://" + window.location.host + "/ws/chat/" + "1" + "/",
-);
-
-chatSocket.onmessage = (event) => {
-  const data = JSON.parse(event.data);
-  createMessage(data);
-};
-
 document.addEventListener("click", (event) => {
-  if (event.target.id === "messageSubmit") {
-    const messageInput = document.getElementById("messageInput");
-    const message = messageInput.value;
-    chatSocket.send(JSON.stringify({ message: message }));
-  } else if (event.target.closest("[data-modal]")) {
+  if (event.target.closest("[data-modal]")) {
     document
       .getElementById(
         event.target.closest("[data-modal]").getAttribute("data-modal"),
