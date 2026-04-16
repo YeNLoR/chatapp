@@ -1,12 +1,13 @@
 <c-vars server="" />
-<a
-  href="/channel/{{server.id}}/"
-  class="flex flex-col"
-  hx-get="/channel/{{server.id}}/"
-  hx-target="#channelList"
-  hx-swap="innerHTML"
-  hx-push-url="true"
->
-  <c-avatar :img="server.img.url" />
-  <span>{{server.name}}</span>
-</a>
+<div class="tooltip tooltip-right" data-tip="{{server.name}}">
+  <a
+    href="/channel/{{server.id}}/"
+    class="flex flex-col"
+    hx-get="/channel/{{server.id}}/"
+    hx-target="#channelList"
+    hx-swap="innerHTML"
+    hx-push-url="true"
+  >
+    <c-avatar :img="server.img.url" />
+  </a>
+</div>

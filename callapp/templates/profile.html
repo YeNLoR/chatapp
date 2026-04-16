@@ -1,6 +1,6 @@
-{% if friend_list %}
-<ul class="menu p-0">
-  {% for item in friend_list%}
+{% extends "index.html" %}{% partialdef content %}
+<ul class="menu w-full p-0">
+  {% if friend_list %} {% for item in friend_list%}
   <li>
     <a
       href="/channel/{{item.server.id}}/{{item.id}}/"
@@ -12,6 +12,11 @@
       >{{item.username}}</a
     >
   </li>
-  {% endfor %}
+  {% endfor %} {% endif %}
+  <li>
+    <button class="btn btn-ghost">arkadaş ekle</button>
+  </li>
 </ul>
-{% endif %}
+<!--prettier-ignore-->
+{% endpartialdef %} {% block sidebar %} {% partial content %} {% endblock %}
+{% block main %} {% endblock %}

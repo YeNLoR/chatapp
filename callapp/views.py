@@ -1,9 +1,11 @@
+from webbrowser import get
+
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
-from .forms import CustomUserCreationForm, MessageForm
+from .forms import ChannelForm, CustomUserCreationForm, MessageForm, ServerForm
 from .models import Channel, Message, Server
 
 
@@ -14,7 +16,11 @@ def index(request):
 def server(request, server_id):
     server = Server.objects.get(id=server_id)
     context = {"current_server": server}
-    template = "channels.html" if request.META.get("HTTP_HX_REQUEST") else "index.html"
+    template = (
+        "channels.html#content"
+        if request.META.get("HTTP_HX_REQUEST")
+        else "channels.html"
+    )
     return render(request, template, context)
 
 
@@ -31,7 +37,11 @@ def channel(request, server_id, channel_id):
         "current_channel": channel,
         "message_form": form,
     }
-    template = "messages.html" if request.META.get("HTTP_HX_REQUEST") else "index.html"
+    template = (
+        "messages.html#content"
+        if request.META.get("HTTP_HX_REQUEST")
+        else "messages.html"
+    )
     return render(request, template, context)
 
 
@@ -62,8 +72,29 @@ def register(request):
 def profile(request):
     friend_list = request.user.friends.all()
     context = {"friend_list": friend_list}
-    template = "profile.html" if request.META.get("HTTP_HX_REQUEST") else "index.html"
+    template = (
+        "profile.html#content"
+        if request.META.get("HTTP_HX_REQUEST")
+        else "profile.html"
+    )
     return render(request, template, context)
+
+
+def create_server(request):
+    form = ServerForm(request.POST or None)
+    if form.is_valid():
+        server = form.save()
+        server.users.add(request.user)
+        return redirect(f"/channel/{server.id}")
+
+
+def create_channel(request, server_id):
+    form = ChannelForm(request.POST or None)
+    if form.is_valid():
+        channel = form.save(commit=False)
+        channel.server_id = server_id
+        channel.save()
+        return redirect(f"/channel/{server_id}/{channel.id}")
 
 
 def message(request, server_id, channel_id):

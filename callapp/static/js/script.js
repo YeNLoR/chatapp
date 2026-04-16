@@ -24,6 +24,12 @@ document.addEventListener("click", (event) => {
     const messageInput = document.getElementById("messageInput");
     const message = messageInput.value;
     chatSocket.send(JSON.stringify({ message: message }));
+  } else if (event.target.closest("[data-modal]")) {
+    document
+      .getElementById(
+        event.target.closest("[data-modal]").getAttribute("data-modal"),
+      )
+      .showModal();
   }
 });
 

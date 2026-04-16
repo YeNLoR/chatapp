@@ -1,4 +1,4 @@
-{% partialdef content %}
+{% extends "channels.html" %}{% partialdef content %}
 <div id="messages" class="flex h-dvh grow flex-col justify-end">
   {% for item in current_channel.messages.all%}
   <div class="flex flex-row">
@@ -27,5 +27,4 @@
     </button>
   </form>
 </div>
-
-{% endpartialdef %} {% partial content %}
+{% endpartialdef %} {% block main %} {% partial content %} {% endblock %}

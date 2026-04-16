@@ -29,4 +29,36 @@
       </div>
     </template>
   </section>
+  <section id="modals">
+    <dialog id="newServerModal" class="modal">
+      <div class="modal-box">
+        <form action="/createserver/" method="post">
+          {% csrf_token %}
+          <label for="servername" class="input">
+            sunucu adı:
+            <input name="{{ server_form.name.html_name }}" type="text" />
+          </label>
+          <button type="submit" class="btn btn-ghost">ekle</button>
+        </form>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+      </form>
+    </dialog>
+    <dialog id="newChannelModal" class="modal">
+      <div class="modal-box">
+        <form action="createchannel/" method="post">
+          {% csrf_token %}
+          <label for="servername" class="input">
+            kanal adı:
+            <input name="{{ channel_form.name.html_name }}" type="text" />
+          </label>
+          <button type="submit" class="btn btn-ghost">ekle</button>
+        </form>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+      </form>
+    </dialog>
+  </section>
 </html>

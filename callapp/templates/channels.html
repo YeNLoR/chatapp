@@ -1,7 +1,7 @@
-{% partialdef content %}
-<ul class="menu p-0">
+{% extends "index.html" %}{% partialdef content %}
+<ul class="menu w-full p-0">
   {% for item in current_server.channels.all%}
-  <li>
+  <li class="grow">
     <a
       href="/channel/{{item.server.id}}/{{item.id}}/"
       class="text-base font-medium"
@@ -13,5 +13,12 @@
     >
   </li>
   {% endfor %}
+  <li>
+    <button class="btn btn-ghost" data-modal="newChannelModal">
+      kanal ekle
+    </button>
+  </li>
 </ul>
-{% endpartialdef %}{% partial content %}
+<!--prettier-ignore-->
+{% endpartialdef %} {% block sidebar %} {% partial content %} {% endblock %}
+{% block main %} {% endblock %}

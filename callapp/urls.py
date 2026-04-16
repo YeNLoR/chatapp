@@ -14,6 +14,12 @@ urlpatterns = [
         views.message,
         name="message",
     ),
+    path("createserver/", views.create_server, name="createserver"),
+    path(
+        "channel/<int:server_id>/createchannel/",
+        views.create_channel,
+        name="createchannel",
+    ),
     path("login/", views.login_view, name="login"),
     path("register/", views.register, name="register"),
     path("<str:room_name>/", views.room, name="room"),
