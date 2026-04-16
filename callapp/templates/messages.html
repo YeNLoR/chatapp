@@ -1,5 +1,5 @@
 {% partialdef content %}
-<div class="flex min-h-full grow flex-col justify-end">
+<div id="messages" class="flex h-dvh grow flex-col justify-end">
   {% for item in current_channel.messages.all%}
   <div class="flex flex-row">
     <c-avatar :img="item.user.avatar.url" />
@@ -9,12 +9,23 @@
     </div>
   </div>
   {% endfor %}
-  <form class="flex flex-row" hx-post="message/">
+</div>
+<div>
+  <form
+    id="messageForm"
+    class="flex flex-row"
+    hx-post="message/"
+    hx-swap="none"
+  >
     <textarea
+      id="messageInput"
       class="input grow"
       name="{{ message_form.message.html_name }}"
     ></textarea>
-    <button type="submit" class="btn btn-neutral">gönder</button>
+    <button id="messageSubmit" type="submit" class="btn btn-neutral">
+      gönder
+    </button>
   </form>
 </div>
+
 {% endpartialdef %} {% partial content %}

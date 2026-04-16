@@ -1,4 +1,7 @@
 Django
+Daphne
+channels
+channels-redis
 django-cotton
 lucide[django]
 Pillow

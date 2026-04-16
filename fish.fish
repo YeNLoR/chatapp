@@ -13,8 +13,10 @@ else
     tmux new-window -a
     tmux new-window -a
     tmux new-window -a
+    tmux new-window -a
     tmux send-keys -t 1 "python manage.py runserver" C-m
     tmux send-keys -t 2 "npm run build" C-m
+    tmux send-keys -t 3 "sudo docker run --rm -p 6379:6379 redis:7" C-m
     tmux select-window -t 3
     tmux attach-session -t $SESSION_NAME
 end

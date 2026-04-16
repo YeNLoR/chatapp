@@ -1,5 +1,6 @@
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
 from .forms import CustomUserCreationForm, MessageForm
@@ -72,6 +73,10 @@ def message(request, server_id, channel_id):
         message.channel_id = channel_id
         message.user_id = request.user.id
         message.save()
-        return
+        return HttpResponse()
     print("hata")
-    return
+    return HttpResponse()
+
+
+def room(request, room_name):
+    return render(request, "room.html", {"room_name": room_name})

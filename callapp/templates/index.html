@@ -35,9 +35,11 @@
       </li>
     </ul>
   </div>
-  <div id="channelList" class="flex min-h-screen min-w-75 flex-col border-r">
+  <div id="channelList" class="flex h-dvh min-w-75 flex-col border-r">
     {% include "channels.html" %} {% include "profile.html" %}
   </div>
-  <div id="messageList" class="flex grow">{% include "messages.html" %}</div>
+  <div id="messageList" class="flex h-dvh grow flex-col">
+    {% include "messages.html" %}
+  </div>
 </div>
 {% endblock %}

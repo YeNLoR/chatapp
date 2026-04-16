@@ -7,9 +7,26 @@
     <link rel="stylesheet" href="{% static 'css/build.css' %}" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
     <script src="{% static 'js/htmx.min.js' %}"></script>
+    <script defer src="{% static 'js/script.js' %}"></script>
     <title>Document</title>
   </head>
   <body hx-headers='{"x-csrftoken": "{{csrf_token}}"}'>
     {% block content %} {% endblock %}
   </body>
+  <section id="templates">
+    <template id="messageTemplate">
+      <div class="flex flex-row">
+        <c-avatar img="/imgurl" />
+        <div class="flex flex-col">
+          <p
+            id="messageTemplateUsername"
+            class="text-base leading-5 opacity-70"
+          >
+            username
+          </p>
+          <p id="messageTemplateContent" class="text-base leading-5">message</p>
+        </div>
+      </div>
+    </template>
+  </section>
 </html>
