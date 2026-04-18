@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import Exists, OuterRef
 
 
 class User(AbstractUser):
@@ -19,6 +20,18 @@ class Channel(models.Model):
     server = models.ForeignKey(
         Server, on_delete=models.CASCADE, related_name="channels"
     )
+
+
+def auth_consumer(channel_id, user):
+    server = (
+        Server.objects.filter(channels__id=channel_id)
+        .annotate(is_in=Exists(Server.objects.filter(id=OuterRef("id"), users=user)))
+        .first()
+    )
+    if server:
+        if server.is_in:
+            return True
+    return False
 
 
 class Message(models.Model):

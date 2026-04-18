@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-l^ezf_#=9%v(qm#xv91^qlvgfl-&$hz^-i^kl*o5489$8vcpj2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 AUTH_USER_MODEL = "callapp.User"
 

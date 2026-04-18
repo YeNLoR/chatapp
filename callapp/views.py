@@ -2,6 +2,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
+from django.db.models import Exists, OuterRef
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
@@ -13,8 +14,16 @@ def index(request):
     return render(request, "index.html")
 
 
-def server(request, server_id):
-    server = Server.objects.get(id=server_id)
+def server_view(request, server_id):
+    server = (
+        Server.objects.filter(id=server_id)
+        .annotate(
+            is_in=Exists(Server.objects.filter(id=OuterRef("id"), users=request.user))
+        )
+        .first()
+    )
+    if not server_view or not server.is_in:
+        return redirect("/")
     context = {"current_server": server}
     template = (
         "channels.html#content"
@@ -24,14 +33,24 @@ def server(request, server_id):
     return render(request, template, context)
 
 
-def channel(request, server_id, channel_id):
+def channel_view(request, server_id, channel_id):
     form = MessageForm(request.POST or None)
     server = (
         None
         if request.META.get("HTTP_HX_REQUEST")
         else Server.objects.get(id=server_id)
     )
-    channel = Channel.objects.get(id=channel_id)
+    channel = (
+        Channel.objects.filter(id=channel_id)
+        .annotate(
+            is_in=Exists(
+                Server.objects.filter(id=OuterRef("server_id"), users=request.user)
+            )
+        )
+        .first()
+    )
+    if not channel or not channel.is_in:
+        return redirect("/")
     context = {
         "current_server": server,
         "current_channel": channel,
@@ -88,7 +107,7 @@ def create_server(request):
         return redirect(f"/channel/{server.id}")
 
 
-def create_channel(request, server_id):
+def create_channel(request, server_id, channel_id=None):
     form = ChannelForm(request.POST or None)
     if form.is_valid():
         channel = form.save(commit=False)
