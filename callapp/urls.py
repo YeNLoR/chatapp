@@ -25,11 +25,11 @@ urlpatterns = [
     path(
         "channel/<int:server_id>/<int:channel_id>/createchannel/",
         views.create_channel,
-        name="createchannel",
+        name="create_channel",
     ),
     path("login/", views.login_view, name="login"),
     path("register/", views.register, name="register"),
-    path("<str:room_name>/", views.room, name="room"),
+    path("profile/add-friend/", views.add_friend, name="add_friend"),
 ]
 
 if settings.DEBUG:

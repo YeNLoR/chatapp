@@ -2,6 +2,7 @@
 <div class="flex flex-row">
   <div id="serverList" class="flex min-h-screen flex-col border-r">
     <ul class="menu p-0">
+      {% if user.is_authenticated %}
       <li class="">
         <div class="tooltip tooltip-right" data-tip="Profil">
           <a
@@ -31,6 +32,22 @@
           </button>
         </div>
       </li>
+      {% endif %} {% if not user.is_authenticated %}
+      <li>
+        <div class="tooltip tooltip-right px-3 py-1.5" data-tip="Giriş yap">
+          <button class="flex flex-col" data-modal="login">
+            {% lucide "key-round" size="40" %}
+          </button>
+        </div>
+      </li>
+      <li>
+        <div class="tooltip tooltip-right px-3 py-1.5" data-tip="Kayıt ol">
+          <button class="flex flex-col" data-modal="register">
+            {% lucide "key-square" size="40" %}
+          </button>
+        </div>
+      </li>
+      {% endif %}
     </ul>
   </div>
   <div id="channelList" class="flex h-dvh min-w-75 flex-col border-r">

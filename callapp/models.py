@@ -6,7 +6,25 @@ from django.db.models import Exists, OuterRef
 
 class User(AbstractUser):
     avatar = models.ImageField(upload_to="avatars/", default="stand.png")
-    friends = models.ManyToManyField("self", symmetrical=True)
+    friends = models.ManyToManyField(
+        "self",
+        through="Friendship",
+        symmetrical=False,
+    )
+
+
+class Friendship(models.Model):
+    from_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="sent_requests"
+    )
+    to_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="received_requests"
+    )
+    status = models.CharField(max_length=20, default="pending")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("from_user", "to_user")
 
 
 class Server(models.Model):

@@ -1,13 +1,17 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from django.contrib.auth import login
+from django.contrib.auth import get_user_model, login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.views.decorators.http import require_POST
 
 from .forms import ChannelForm, CustomUserCreationForm, MessageForm, ServerForm
-from .models import Channel, Message, Server
+from .models import Channel, Friendship, Message, Server
+
+User = get_user_model()
 
 
 def index(request):
@@ -89,7 +93,13 @@ def register(request):
 
 
 def profile(request):
-    friend_list = request.user.friends.all()
+    friend_list_filters = Q(
+        sent_requests__to_user_id=request.user.id, sent_requests__status="accepted"
+    ) | Q(
+        received_requests__from_user_id=request.user.id,
+        received_requests__status="accepted",
+    )
+    friend_list = User.objects.filter(friend_list_filters)
     context = {"friend_list": friend_list}
     template = (
         "profile.html#content"
@@ -99,6 +109,8 @@ def profile(request):
     return render(request, template, context)
 
 
+@login_required
+@require_POST
 def create_server(request):
     form = ServerForm(request.POST or None)
     if form.is_valid():
@@ -107,6 +119,8 @@ def create_server(request):
         return redirect(f"/channel/{server.id}")
 
 
+@login_required
+@require_POST
 def create_channel(request, server_id, channel_id=None):
     form = ChannelForm(request.POST or None)
     if form.is_valid():
@@ -116,6 +130,8 @@ def create_channel(request, server_id, channel_id=None):
         return redirect(f"/channel/{server_id}/{channel.id}")
 
 
+@login_required
+@require_POST
 def message(request, server_id, channel_id):
     form = MessageForm(request.POST or None)
     if form.is_valid():
@@ -138,5 +154,20 @@ def message(request, server_id, channel_id):
     return HttpResponse()
 
 
-def room(request, room_name):
-    return render(request, "room.html", {"room_name": room_name})
+@login_required
+@require_POST
+def add_friend(request):
+    username = request.POST.get("friend_username")
+    is_friends_filter = Q(from_user_id=OuterRef("id"), to_user_id=request.user.id) | Q(
+        from_user=request.user.id, to_user=OuterRef("id")
+    )
+    friend = (
+        User.objects.filter(username=username)
+        .annotate(is_friends=Exists(Friendship.objects.filter(is_friends_filter)))
+        .first()
+    )
+    if not friend or friend.is_friends:
+        print(friend)
+        return HttpResponse(status=400)
+    Friendship.objects.create(from_user=request.user, to_user=friend)
+    return redirect("profile")
