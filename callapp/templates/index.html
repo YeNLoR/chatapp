@@ -1,60 +1,78 @@
 {% extends "base.html" %} {% block content %} {% load lucide %}
-<div class="flex flex-row">
-  <div id="serverList" class="flex min-h-screen flex-col border-r">
-    <ul class="menu p-0">
-      {% if user.is_authenticated %}
-      <li class="">
-        <div class="tooltip tooltip-right" data-tip="Profil">
-          <a
-            href="/profile/"
-            class="flex flex-col"
-            hx-get="/profile/"
-            hx-target="#channelList"
-            hx-swap="innerHTML"
-            hx-push-url="true"
-          >
-            {% lucide "user" size="40" %}
-          </a>
-        </div>
-      </li>
-      {% for item in user.servers.all%}
-      <li>
-        <c-server-icon :server="item" />
-      </li>
-      {% endfor %}
-      <li>
-        <div
-          class="tooltip tooltip-right px-3 py-1.5"
-          data-tip="Sunucu oluştur"
-        >
-          <button class="flex flex-col" data-modal="newServerModal">
-            {% lucide "message-circle-plus" size="40" %}
-          </button>
-        </div>
-      </li>
-      {% endif %} {% if not user.is_authenticated %}
-      <li>
-        <div class="tooltip tooltip-right px-3 py-1.5" data-tip="Giriş yap">
-          <button class="flex flex-col" data-modal="login">
-            {% lucide "key-round" size="40" %}
-          </button>
-        </div>
-      </li>
-      <li>
-        <div class="tooltip tooltip-right px-3 py-1.5" data-tip="Kayıt ol">
-          <button class="flex flex-col" data-modal="register">
-            {% lucide "key-square" size="40" %}
-          </button>
-        </div>
-      </li>
-      {% endif %}
-    </ul>
+<div class="flex h-screen w-screen flex-col overflow-hidden">
+  <div class="bg-base-300 sticky z-20 flex w-full flex-none flex-row px-1">
+    <div class="flex-1"></div>
+    <span>chatapp</span>
+    <div class="flex flex-1 justify-end">
+      <button
+        hx-get="/notifications/"
+        hx-swap="innerHTML"
+        hx-target="#inbox"
+        popovertarget="inbox"
+        class="btn h-5 p-0"
+      >
+        {% lucide "bell" size="20" %}
+      </button>
+      <ul class="dropdown menu" popover id="inbox"></ul>
+    </div>
   </div>
-  <div id="channelList" class="flex h-dvh min-w-75 flex-col border-r">
-    {% block sidebar %} {% endblock %}
-  </div>
-  <div id="messageList" class="flex h-dvh grow flex-col">
-    {% block main %} {% endblock %}
+  <div class="flex flex-1 flex-row overflow-hidden">
+    <div id="serverList" class="h-full flex-none overflow-y-auto border-r">
+      <ul class="menu p-0">
+        {% if user.is_authenticated %}
+        <li class="">
+          <div class="tooltip tooltip-right" data-tip="Profil">
+            <a
+              href="/profile/"
+              class="flex flex-col p-1"
+              hx-get="/profile/"
+              hx-target="#channelList"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+            >
+              {% lucide "user" size="40" %}
+            </a>
+          </div>
+        </li>
+        {% for item in user.servers.all%}
+        <li>
+          <c-server-icon :server="item" />
+        </li>
+        {% endfor %}
+        <li>
+          <div class="tooltip tooltip-right" data-tip="Sunucu oluştur">
+            <button class="flex flex-col p-1" data-modal="newServerModal">
+              {% lucide "message-circle-plus" size="40" %}
+            </button>
+          </div>
+        </li>
+        {% endif %} {% if not user.is_authenticated %}
+        <li>
+          <div class="tooltip tooltip-right" data-tip="Giriş yap">
+            <button class="flex flex-col p-1" data-modal="login">
+              {% lucide "key-round" size="40" %}
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="tooltip tooltip-right px-3 py-1.5" data-tip="Kayıt ol">
+            <button class="flex flex-col" data-modal="register">
+              {% lucide "key-square" size="40" %}
+            </button>
+          </div>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+    <div
+      id="channelList"
+      class="h-full w-64 flex-none overflow-y-auto border-r"
+    >
+      {% block sidebar %} {% endblock %}
+    </div>
+    <div id="messageList" class="h-full flex-1 overflow-hidden">
+      {% block main %} {% endblock %}
+    </div>
   </div>
 </div>
 {% endblock %}

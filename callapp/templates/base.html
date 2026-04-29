@@ -66,7 +66,7 @@
     </dialog>
     <dialog id="addFriendModal" class="modal">
       <div class="modal-box">
-        <form action="add-friend/" method="post">
+        <form action="friendship-request/" method="post">
           {% csrf_token %}
           <label for="friend_name" class="input">
             Kullanıcı adı:
@@ -95,13 +95,9 @@
                   type="text"
                   required
                   placeholder="Kullanıcı Adı"
-                  pattern="[A-Za-z][A-Za-z0-9\-]*"
-                  minlength="3"
-                  maxlength="30"
-                  title="kelime 3 ile 30 karakter arasında olmalı, sadece harf, rakam veya tire içerebilir"
-                  name="{{ form.username.html_name }}"
-                  id="{{ form.username.html_name }}"
-                  value="{{ form.username.value|default:''}}"
+                  name="{{ login_form.username.html_name }}"
+                  id="{{ login_form.username.html_name }}"
+                  value="{{ login_form.username.value|default:''}}"
                 />
               </label>
               <p class="validator-hint hidden">
@@ -114,11 +110,8 @@
                   type="password"
                   required
                   placeholder="Şifre"
-                  minlength="8"
-                  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                  title="8 karakterden uzun olmalı, en az bir rakam, bir küçük harf ve bir büyük harf içermelidir"
-                  name="{{ form.password.html_name }}"
-                  id="{{ form.password.html_name }}"
+                  name="{{ login_form.password.html_name }}"
+                  id="{{ login_form.password.html_name }}"
                 />
               </label>
               <p class="validator-hint hidden">
@@ -157,9 +150,9 @@
                   minlength="3"
                   maxlength="30"
                   title="kelime 3 ile 30 karakter arasında olmalı, sadece harf, rakam veya tire içerebilir"
-                  name="{{ form.username.html_name }}"
-                  id="{{ form.username.html_name }}"
-                  value="{{ form.username.value|default:''}}"
+                  name="{{ register_form.username.html_name }}"
+                  id="{{ register_form.username.html_name }}"
+                  value="{{ register_form.username.value|default:''}}"
                 />
               </label>
               <p class="validator-hint hidden">
@@ -175,8 +168,8 @@
                   minlength="8"
                   pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                   title="8 karakterden uzun olmalı, en az bir rakam, bir küçük harf ve bir büyük harf içermelidir"
-                  name="{{ form.password1.html_name }}"
-                  id="{{ form.password1.html_name }}"
+                  name="{{ register_form.password1.html_name }}"
+                  id="{{ register_form.password1.html_name }}"
                 />
               </label>
               <p class="validator-hint hidden">
@@ -192,8 +185,8 @@
                   minlength="8"
                   pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                   title="8 karakterden uzun olmalı, en az bir rakam, bir küçük harf ve bir büyük harf içermelidir"
-                  name="{{ form.password2.html_name }}"
-                  id="{{ form.password2.html_name }}"
+                  name="{{ register_form.password2.html_name }}"
+                  id="{{ register_form.password2.html_name }}"
                 />
               </label>
               <p class="validator-hint hidden">
