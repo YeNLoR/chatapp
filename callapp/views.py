@@ -58,6 +58,10 @@ def profile(request):
         received_requests__status="accepted",
     )
     friend_list = User.objects.filter(friend_list_filters)
+    for friend in friend_list:
+        server, channel = Server.get_dm_server(request.user, friend)
+        friend.server_id = server.id
+        friend.channel_id = channel.id
     context = {"friend_list": friend_list}
     template = (
         "profile.html#content"
@@ -135,7 +139,7 @@ def server_view(request, server_id):
         )
         .first()
     )
-    if not server_view or not server.is_in:
+    if not server or not server.is_in:
         return redirect("/")
     context = {"current_server": server}
     template = (
@@ -186,6 +190,15 @@ def channel_view(request, server_id, channel_id):
         else "messages.html"
     )
     return render(request, template, context)
+
+
+@login_required
+@require_POST
+def join_server(request):
+    invite = request.POST.get("invite")
+    server = Server.objects.filter(invite=invite).first()
+    server.users.add(request.user)
+    return HttpResponseRedirect("/")
 
 
 @login_required

@@ -22,6 +22,7 @@ urlpatterns = [
         name="friendship-response",
     ),
     path("createserver/", views.create_server, name="createserver"),
+    path("joinserver/", views.join_server, name="joinserver"),
     path("channel/<int:server_id>/", views.server_view, name="server"),
     path(
         "channel/<int:server_id>/createchannel/",

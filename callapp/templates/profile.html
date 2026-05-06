@@ -1,11 +1,21 @@
-{% extends "index.html" %}{% partialdef content %}
+{% extends "index.html" %}{% partialdef content %}{% load lucide %}
 <ul class="menu w-full p-0">
+  <!--
+  <form action="">
+    <label for="search" class="input">
+      <input name="search" type="search" placeholder="Arkadaşını bul" />
+      <button class="btn btn-ghost btn-circle h-8">
+        {% lucide "search" %}
+      </button>
+    </label>
+  </form>
+  -->
   {% if friend_list %} {% for item in friend_list%}
   <li>
     <a
-      href="/channel/{{item.server.id}}/{{item.id}}/"
+      href="/channel/{{item.server_id}}/{{item.channel_id}}/"
       class="text-base font-medium"
-      hx-get="/channel/{{item.server.id}}/{{item.id}}/"
+      hx-get="/channel/{{item.server_id}}/{{item.channel_id}}/"
       hx-target="#messageList"
       hx-swap="innerHTML"
       hx-push-url="true"

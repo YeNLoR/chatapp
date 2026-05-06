@@ -1,4 +1,34 @@
-{% extends "index.html" %}{% partialdef content %}
+{% extends "index.html" %}{% partialdef content %}{% load lucide %}
+<div class="flex flex-row border-b px-3 py-1">
+  <div class="flex-1"></div>
+  <span class="flex-1 font-bold">{{current_server.name}}</span>
+  <div class="flex-1">
+    <button
+      class="btn btn-ghost btn-circle dropdown ml-auto flex h-7 w-7"
+      popovertarget="invitepopover"
+      style="anchor-name: --invitepopbutton"
+    >
+      {% lucide "user-plus" %}
+    </button>
+    <span
+      class="dropdown bg-reverse color-reverse shadow- -z-10 flex items-center p-2 shadow-sm"
+      popover
+      id="invitepopover"
+      style="position-anchor: --invitepopbutton; position-area: bottom"
+    >
+      {% if current_server.invite %}{{current_server.invite}}
+      <button
+        class="btn btn-ghost btn-circle ml-1 h-6 p-0"
+        onclick="
+          navigator.clipboard.writeText(this.closest('span').textContent.trim())
+        "
+      >
+        {% lucide "copy" size="20" %}
+      </button>
+      {% else %} Davet kodu yok.{% endif %}
+    </span>
+  </div>
+</div>
 <ul class="menu w-full p-0">
   {% for item in current_server.channels.all%}
   <li class="grow">

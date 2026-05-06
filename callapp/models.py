@@ -1,4 +1,5 @@
-from django.contrib.auth import get_user_model
+from uuid import uuid7
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Exists, OuterRef
@@ -31,6 +32,19 @@ class Server(models.Model):
     name = models.CharField(max_length=100)
     img = models.ImageField(upload_to="servers/", default="el_bug50.png")
     users = models.ManyToManyField(User, related_name="servers")
+    invite = models.CharField(null=True, blank=True, default=uuid7)
+    is_dm = models.BooleanField(default=False)
+
+    @classmethod
+    def get_dm_server(cls, user1, user2):
+        server_name = f"dm_{min(user1.id, user2.id)}_{max(user1.id, user2.id)}"
+        server, created = cls.objects.get_or_create(
+            name=server_name, is_dm=True, defaults={"invite": None}
+        )
+        if created:
+            server.users.add(user1, user2)
+        channel, _ = Channel.objects.get_or_create(name="direct", server=server)
+        return server, channel
 
 
 class Channel(models.Model):

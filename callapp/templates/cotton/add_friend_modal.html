@@ -1,0 +1,15 @@
+<dialog id="addFriendModal" class="modal">
+  <div class="modal-box">
+    <form action="friendship-request/" method="post">
+      {% csrf_token %}
+      <label for="friend_name" class="input">
+        Kullanıcı adı:
+        <input name="friend_username" type="text" />
+      </label>
+      <button type="submit" class="btn btn-ghost">ekle</button>
+    </form>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>

@@ -1,0 +1,50 @@
+{% load lucide %}
+<dialog id="login" class="modal">
+  <div class="modal-box">
+    <div class="flex min-h-full min-w-full justify-center">
+      <form
+        action="/login/"
+        method="post"
+        class="form min-h-40 max-w-125 min-w-125 self-center pt-3 pr-4 pb-3 pl-4"
+      >
+        <div class="flex flex-col gap-1 border p-4">
+          {%csrf_token%}
+          <label class="input validator min-w-full">
+            {% lucide "user" class="opacity-50" size="21" %}
+            <input
+              type="text"
+              required
+              placeholder="Kullanıcı Adı"
+              name="{{ login_form.username.html_name }}"
+              id="{{ login_form.username.html_name }}"
+              value="{{ login_form.username.value|default:''}}"
+            />
+          </label>
+          <p class="validator-hint hidden">
+            Kelime 3 ile 30 karakter arasında olmalı sadece harf, rakam veya
+            tire içerebilir
+          </p>
+          <label class="input validator mt-2 min-w-full">
+            {% lucide "key-square" class="opacity-50" size="21" %}
+            <input
+              type="password"
+              required
+              placeholder="Şifre"
+              name="{{ login_form.password.html_name }}"
+              id="{{ login_form.password.html_name }}"
+            />
+          </label>
+          <p class="validator-hint hidden">
+            8 karakterden uzun olmalı en az bir rakam bir küçük harf ve bir
+            büyük harf içermelidir
+          </p>
+          <br />
+          <button type="submit" class="btn btn-active mt-2">Giriş Yap</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>

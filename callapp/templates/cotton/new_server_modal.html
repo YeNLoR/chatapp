@@ -1,0 +1,42 @@
+<dialog id="newServerModal" class="modal">
+  <div class="modal-box">
+    <div class="tabs tabs-border">
+      <input
+        type="radio"
+        name="servermodaloption"
+        class="tab"
+        aria-label="sunucu oluştur"
+      />
+      <div class="tab-content">
+        <form action="/createserver/" method="post">
+          {% csrf_token %}
+          <label for="servername" class="input mt-2">
+            Sunucu adı:
+            <input name="{{ server_form.name.html_name }}" type="text" />
+          </label>
+          <button type="submit" class="btn btn-ghost">Ekle</button>
+        </form>
+      </div>
+      <input
+        type="radio"
+        name="servermodaloption"
+        class="tab"
+        aria-label="sunucuya katıl"
+        checked
+      />
+      <div class="tab-content">
+        <form action="/joinserver/" method="post">
+          {% csrf_token %}
+          <label for="invite" class="input mt-2">
+            Davet kodu:
+            <input name="invite" type="text" />
+          </label>
+          <button type="submit" class="btn btn-ghost">Katıl</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>

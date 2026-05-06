@@ -1,0 +1,31 @@
+{%load lucide%}
+<dialog id="ongoingCallModal" class="modal">
+  <div class="modal-box max-w-100">
+    <div class="flex flex-col">
+      <span class="mx-auto">Devam eden çağrı</span>
+      <div class="flex flex-row">
+        <div class="avatar mx-auto">
+          <div class="w-24 rounded-full">
+            <img src="/media/stand.png" alt="" class="object-cover" />
+          </div>
+        </div>
+
+        <div class="avatar mx-auto">
+          <div class="w-24 rounded-full">
+            <img src="/media/el_bug50.png" alt="" class="object-cover" />
+          </div>
+        </div>
+      </div>
+      <div class="mt-3 flex flex-row justify-around">
+        <button class="btn btn-success btn-circle">{% lucide "mic" %}</button>
+        <button class="btn btn-success btn-circle">{% lucide "video" %}</button>
+        <button class="btn btn-error btn-circle">
+          {% lucide "phone" class="rotate-135" %}
+        </button>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>

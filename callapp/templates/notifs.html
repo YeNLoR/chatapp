@@ -1,6 +1,10 @@
 {% for i in notifs %} {% load lucide %}
 <li>
-  <form action="friendship-response/" method="post" class="flex flex-col">
+  <form
+    action="/profile/friendship-response/"
+    method="post"
+    class="flex flex-col"
+  >
     {% csrf_token %}
     <input type="hidden" name="requester_username" value="{{i.username}}" />
     <span class="w-50">Gelen arkadaşlık isteği: {{i.username}}</span>
