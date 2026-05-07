@@ -10,7 +10,6 @@ urlpatterns = [
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
     path("notifications/", views.notifications, name="notifications"),
-    path("profile/", views.profile, name="profile"),
     path(
         "profile/friendship-request/",
         views.friendship_request,
@@ -23,11 +22,15 @@ urlpatterns = [
     ),
     path("createserver/", views.create_server, name="createserver"),
     path("joinserver/", views.join_server, name="joinserver"),
+    path("channel/friends/", views.profile, name="profile"),
     path("channel/<int:server_id>/", views.server_view, name="server"),
     path(
         "channel/<int:server_id>/createchannel/",
         views.create_channel,
         name="createchannel",
+    ),
+    path(
+        "channel/friends/<int:channel_id>/", views.channel_view, name="friend_channel"
     ),
     path(
         "channel/<int:server_id>/<int:channel_id>/", views.channel_view, name="channel"

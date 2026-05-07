@@ -21,15 +21,23 @@ function initPeer() {
   });
 
   peer.on("call", (incomingCall) => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        localStream = stream;
-        incomingCall.answer(stream);
-        incomingCall.on("stream", showRemoteStream);
-        activeCall = incomingCall;
-      });
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+      localStream = stream;
+      incomingCall.answer(stream);
+      incomingCall.on("stream", showRemoteStream);
+      activeCall = incomingCall;
+    });
   });
+}
+
+function showIncomingCallUI(data) {
+  const incomingCallUI = document.getElementById("incomingCallModal");
+  console.log(data);
+  incomingCallUI.querySelector("#callerUsername").textContent =
+    data.from_username;
+  ((incomingCallUI.querySelector("#incomingCallAccept").onclick = () =>
+    acceptCall(data.from_user_id)),
+    incomingCallUI.showModal());
 }
 
 function handleSignal(data) {
@@ -39,14 +47,12 @@ function handleSignal(data) {
       break;
 
     case "call.answer":
-      navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
-        .then((stream) => {
-          localStream = stream;
-          showLocalStream(stream);
-          activeCall = peer.call(data.peer_id, stream);
-          activeCall.on("stream", showRemoteStream);
-        });
+      navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+        localStream = stream;
+        showLocalStream(stream);
+        activeCall = peer.call(data.peer_id, stream);
+        activeCall.on("stream", showRemoteStream);
+      });
       break;
 
     case "call.reject":
@@ -71,6 +77,7 @@ function callUser(targetUserId) {
 }
 
 function acceptCall(fromUserId) {
+  console.log("test");
   callSocket.send(
     JSON.stringify({
       type: "call.answer",

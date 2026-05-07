@@ -12,15 +12,23 @@
   -->
   {% if friend_list %} {% for item in friend_list%}
   <li>
-    <a
-      href="/channel/{{item.server_id}}/{{item.channel_id}}/"
-      class="text-base font-medium"
-      hx-get="/channel/{{item.server_id}}/{{item.channel_id}}/"
-      hx-target="#messageList"
-      hx-swap="innerHTML"
-      hx-push-url="true"
-      >{{item.username}}</a
-    >
+    <div class="flex flex-row justify-between">
+      <a
+        href="/channel/friends/{{item.channel_id}}/"
+        class="text-base font-medium"
+        hx-get="/channel/friends/{{item.channel_id}}/"
+        hx-target="#messageList"
+        hx-swap="innerHTML"
+        hx-push-url="true"
+        >{{item.username}}
+      </a>
+      <button
+        onclick="callUser({{item.id}})"
+        class="btn btn-circle btn-ghost btn-success h-6 w-6"
+      >
+        {% lucide "phone-call" %}
+      </button>
+    </div>
   </li>
   {% endfor %} {% endif %}
   <li>

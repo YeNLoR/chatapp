@@ -43,6 +43,81 @@ def login_view(request):
         print("wrong method")
 
 
+def server_view(request, server_id):
+    server = (
+        Server.objects.filter(id=server_id)
+        .annotate(
+            is_in=Exists(Server.objects.filter(id=OuterRef("id"), users=request.user))
+        )
+        .first()
+    )
+    if not server or not server.is_in:
+        return redirect("/")
+    context = {"current_server": server}
+    template = (
+        "channels.html#content"
+        if request.META.get("HTTP_HX_REQUEST")
+        else "channels.html"
+    )
+    return render(request, template, context)
+
+
+def channel_view(request, server_id=None, channel_id=None):
+    form = MessageForm(request.POST or None)
+
+    channel = (
+        Channel.objects.filter(id=channel_id)
+        .annotate(
+            is_in=Exists(
+                Server.objects.filter(id=OuterRef("server_id"), users=request.user)
+            )
+        )
+        .first()
+    )
+    if not channel or not channel.is_in:
+        return redirect("/")
+
+    if server_id:
+        server = (
+            None
+            if request.META.get("HTTP_HX_REQUEST")
+            else Server.objects.get(id=server_id)
+        )
+        context = {
+            "current_server": server,
+            "current_channel": channel,
+            "message_form": form,
+        }
+        template = (
+            "messages.html#content"
+            if request.META.get("HTTP_HX_REQUEST")
+            else "messages.html"
+        )
+    else:
+        friend_list_filters = Q(
+            sent_requests__to_user_id=request.user.id, sent_requests__status="accepted"
+        ) | Q(
+            received_requests__from_user_id=request.user.id,
+            received_requests__status="accepted",
+        )
+        friend_list = User.objects.filter(friend_list_filters)
+        for friend in friend_list:
+            server, channel = Server.get_dm_server(request.user, friend)
+            friend.server_id = server.id
+            friend.channel_id = channel.id
+        context = {
+            "friend_list": friend_list,
+            "current_channel": channel,
+            "message_form": form,
+        }
+        template = (
+            "direct_mesages.html#content"
+            if request.META.get("HTTP_HX_REQUEST")
+            else "direct_mesages.html"
+        )
+    return render(request, template, context)
+
+
 @login_required
 @require_POST
 def logout_view(request):
@@ -131,25 +206,6 @@ def create_server(request):
         return redirect(f"/channel/{server.id}")
 
 
-def server_view(request, server_id):
-    server = (
-        Server.objects.filter(id=server_id)
-        .annotate(
-            is_in=Exists(Server.objects.filter(id=OuterRef("id"), users=request.user))
-        )
-        .first()
-    )
-    if not server or not server.is_in:
-        return redirect("/")
-    context = {"current_server": server}
-    template = (
-        "channels.html#content"
-        if request.META.get("HTTP_HX_REQUEST")
-        else "channels.html"
-    )
-    return render(request, template, context)
-
-
 @login_required
 @require_POST
 def create_channel(request, server_id, channel_id=None):
@@ -159,37 +215,6 @@ def create_channel(request, server_id, channel_id=None):
         channel.server_id = server_id
         channel.save()
         return redirect(f"/channel/{server_id}/{channel.id}")
-
-
-def channel_view(request, server_id, channel_id):
-    form = MessageForm(request.POST or None)
-    server = (
-        None
-        if request.META.get("HTTP_HX_REQUEST")
-        else Server.objects.get(id=server_id)
-    )
-    channel = (
-        Channel.objects.filter(id=channel_id)
-        .annotate(
-            is_in=Exists(
-                Server.objects.filter(id=OuterRef("server_id"), users=request.user)
-            )
-        )
-        .first()
-    )
-    if not channel or not channel.is_in:
-        return redirect("/")
-    context = {
-        "current_server": server,
-        "current_channel": channel,
-        "message_form": form,
-    }
-    template = (
-        "messages.html#content"
-        if request.META.get("HTTP_HX_REQUEST")
-        else "messages.html"
-    )
-    return render(request, template, context)
 
 
 @login_required
