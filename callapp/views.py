@@ -76,7 +76,6 @@ def channel_view(request, server_id=None, channel_id=None):
     )
     if not channel or not channel.is_in:
         return redirect("/")
-
     if server_id:
         server = (
             None
@@ -185,15 +184,14 @@ def friendship_response(request):
         from_user=requester, to_user=request.user
     ).first()
     if not friendship:
-        print("doesnt exist??", requester)
         return HttpResponse(status=404)
     if action == "accept":
         friendship.status = "accepted"
         friendship.save()
-        return HttpResponseRedirect("/profile/")
+        return HttpResponseRedirect("/channel/friends/")
     if action == "reject":
         friendship.delete()
-        return HttpResponseRedirect("/profile/")
+        return HttpResponseRedirect("/channel/friends/")
 
 
 @login_required
@@ -228,9 +226,9 @@ def join_server(request):
 
 @login_required
 @require_POST
-def message(request, server_id, channel_id):
+def message(request, server_id=None, channel_id=None):
     form = MessageForm(request.POST or None)
-    if form.is_valid():
+    if channel_id and form.is_valid():
         message = form.save(commit=False)
         message.channel_id = channel_id
         message.user_id = request.user.id

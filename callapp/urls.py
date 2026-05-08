@@ -41,6 +41,11 @@ urlpatterns = [
         name="create_channel",
     ),
     path(
+        "channel/friends/<int:channel_id>/message/",
+        views.message,
+        name="friend_message",
+    ),
+    path(
         "channel/<int:server_id>/<int:channel_id>/message/",
         views.message,
         name="message",

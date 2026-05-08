@@ -8,8 +8,9 @@
           <div class="w-24 rounded-full">
             <video
               id="localVideo"
-              src="/media/stand.png"
-              alt=""
+              autoplay
+              playsinline
+              muted
               class="object-cover"
             />
           </div>
@@ -17,19 +18,14 @@
 
         <div class="avatar mx-auto">
           <div class="w-24 rounded-full">
-            <video
-              id="remoteVideo"
-              src="/media/el_bug50.png"
-              alt=""
-              class="object-cover"
-            />
+            <video id="remoteVideo" autoplay playsinline class="object-cover" />
           </div>
         </div>
       </div>
       <div class="mt-3 flex flex-row justify-around">
         <button class="btn btn-success btn-circle">{% lucide "mic" %}</button>
         <button class="btn btn-success btn-circle">{% lucide "video" %}</button>
-        <button class="btn btn-error btn-circle">
+        <button id="endOngoingCall" class="btn btn-error btn-circle">
           {% lucide "phone" class="rotate-135" %}
         </button>
       </div>

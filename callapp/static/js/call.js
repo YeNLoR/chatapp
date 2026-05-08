@@ -21,12 +21,17 @@ function initPeer() {
   });
 
   peer.on("call", (incomingCall) => {
-    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      localStream = stream;
-      incomingCall.answer(stream);
-      incomingCall.on("stream", showRemoteStream);
-      activeCall = incomingCall;
-    });
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        localStream = stream;
+        showLocalStream(localStream);
+        incomingCall.answer(stream);
+        incomingCall.on("stream", showRemoteStream);
+        activeCall = incomingCall;
+        document.getElementById("incomingCallModal").close();
+        document.getElementById("ongoingCallModal").showModal();
+      });
   });
 }
 
@@ -38,6 +43,10 @@ function showIncomingCallUI(data) {
   ((incomingCallUI.querySelector("#incomingCallAccept").onclick = () =>
     acceptCall(data.from_user_id)),
     incomingCallUI.showModal());
+  document.getElementById("endOngoingCall").onclick = () => {
+    endCall(data.target_user_id);
+    document.getElementById("ongoingCallModal").close();
+  };
 }
 
 function handleSignal(data) {
@@ -47,12 +56,15 @@ function handleSignal(data) {
       break;
 
     case "call.answer":
-      navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-        localStream = stream;
-        showLocalStream(stream);
-        activeCall = peer.call(data.peer_id, stream);
-        activeCall.on("stream", showRemoteStream);
-      });
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          localStream = stream;
+          showLocalStream(stream);
+          activeCall = peer.call(data.peer_id, stream);
+          activeCall.on("stream", showRemoteStream);
+          document.getElementById("ongoingCallModal").showModal();
+        });
       break;
 
     case "call.reject":
@@ -74,6 +86,10 @@ function callUser(targetUserId) {
       peer_id: window._myPeerId,
     }),
   );
+  document.getElementById("endOngoingCall").onclick = () => {
+    endCall();
+    document.getElementById("ongoingCallModal").close();
+  };
 }
 
 function acceptCall(fromUserId) {

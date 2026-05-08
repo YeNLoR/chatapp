@@ -50,3 +50,38 @@ document.addEventListener("htmx:afterRequest", (event) => {
     event.detail.elt.querySelector("#messageInput").focus();
   }
 });
+
+document.addEventListener("mouseover", (event) => {
+  const tooltip = event.target.closest("[data-tooltip]");
+  const tooltipCheck = tooltip?.querySelector("[data-is-tooltip]");
+  if (tooltip && !tooltipCheck) {
+    const tooltipText = tooltip.dataset.tooltip;
+    const coords = tooltip.getBoundingClientRect();
+    const tooltipCoords = {
+      x: coords.right + 20,
+      y: (coords.bottom - coords.top) / 2,
+    };
+    const tooltipElement = document.createElement("span");
+    tooltipElement.classList.add(
+      "absolute",
+      "bg-base-200",
+      "border",
+      "text-base",
+      "p-1",
+    );
+    tooltipElement.textContent = tooltipText;
+    tooltipElement.setAttribute("data-is-tooltip", "");
+    tooltip.appendChild(tooltipElement);
+    const parentHeight = tooltip.offsetHeight;
+    const tooltipHeight = tooltipElement.offsetHeight;
+    tooltipElement.style.left = "calc(100%)";
+    tooltipElement.style.top = `${parentHeight / 2 - tooltipHeight / 2}px`;
+    tooltip.addEventListener(
+      "mouseout",
+      () => {
+        tooltip.querySelector("[data-is-tooltip]")?.remove();
+      },
+      { once: true },
+    );
+  }
+});
