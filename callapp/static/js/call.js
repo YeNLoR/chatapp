@@ -130,3 +130,31 @@ function cleanup() {
 
 connectCallSocket();
 initPeer();
+
+function toggleAudio() {
+  if (localStream) {
+    const audioTrack = localStream.getAudioTracks()[0];
+    if (audioTrack) {
+      audioTrack.enabled = !audioTrack.enabled;
+      console.log(audioTrack.enabled ? "Audio Enabled" : "Audio Muted");
+
+      const button = document.getElementById("ongoingMic");
+      button.classList.toggle("btn-success");
+      button.classList.toggle("btn-error");
+    }
+  }
+}
+
+function toggleVideo() {
+  if (localStream) {
+    const videoTrack = localStream.getVideoTracks()[0];
+    if (videoTrack) {
+      videoTrack.enabled = !videoTrack.enabled;
+      console.log(videoTrack.enabled ? "Video Enabled" : "Video Disabled");
+
+      const button = document.getElementById("ongoingCam");
+      button.classList.toggle("btn-success");
+      button.classList.toggle("btn-error");
+    }
+  }
+}

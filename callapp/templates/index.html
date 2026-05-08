@@ -1,5 +1,5 @@
 {% extends "base.html" %} {% block content %} {% load lucide %}
-<div class="flex h-screen w-screen flex-col overflow-hidden">
+<div class="flex h-dvh w-dvw flex-col overflow-hidden">
   <div
     class="bg-base-300 sticky z-20 flex w-full flex-none flex-row items-center px-1"
   >
@@ -32,7 +32,7 @@
     </div>
   </div>
   <div class="flex flex-1 flex-row overflow-hidden">
-    <div id="serverList" class="h-full flex-none border-r">
+    <div id="serverList" class="h-full flex-none overflow-y-scroll border-r">
       <ul class="menu p-0">
         {% if user.is_authenticated %}
         <li class="">

@@ -4,27 +4,34 @@
     <div class="flex flex-col">
       <span class="mx-auto">Devam eden çağrı</span>
       <div class="flex flex-row">
-        <div class="avatar mx-auto">
-          <div class="w-24 rounded-full">
-            <video
-              id="localVideo"
-              autoplay
-              playsinline
-              muted
-              class="object-cover"
-            />
-          </div>
+        <div class="flex-1">
+          <video
+            id="localVideo"
+            autoplay
+            playsinline
+            muted
+            class="object-cover"
+          />
         </div>
-
-        <div class="avatar mx-auto">
-          <div class="w-24 rounded-full">
-            <video id="remoteVideo" autoplay playsinline class="object-cover" />
-          </div>
+        <div class="flex-1">
+          <video id="remoteVideo" autoplay playsinline class="object-cover" />
         </div>
       </div>
       <div class="mt-3 flex flex-row justify-around">
-        <button class="btn btn-success btn-circle">{% lucide "mic" %}</button>
-        <button class="btn btn-success btn-circle">{% lucide "video" %}</button>
+        <button
+          id="ongoingMic"
+          onclick="toggleAudio()"
+          class="btn btn-success btn-circle"
+        >
+          {% lucide "mic" %}
+        </button>
+        <button
+          id="ongoingCam"
+          onclick="toggleVideo()"
+          class="btn btn-success btn-circle"
+        >
+          {% lucide "video" %}
+        </button>
         <button id="endOngoingCall" class="btn btn-error btn-circle">
           {% lucide "phone" class="rotate-135" %}
         </button>

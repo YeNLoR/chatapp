@@ -57,10 +57,8 @@ document.addEventListener("mouseover", (event) => {
   if (tooltip && !tooltipCheck) {
     const tooltipText = tooltip.dataset.tooltip;
     const coords = tooltip.getBoundingClientRect();
-    const tooltipCoords = {
-      x: coords.right + 20,
-      y: (coords.bottom - coords.top) / 2,
-    };
+    const posX = coords.right + window.scrollX + 10;
+    const posY = coords.top + window.scrollY + coords.height / 2;
     const tooltipElement = document.createElement("span");
     tooltipElement.classList.add(
       "absolute",
@@ -71,15 +69,14 @@ document.addEventListener("mouseover", (event) => {
     );
     tooltipElement.textContent = tooltipText;
     tooltipElement.setAttribute("data-is-tooltip", "");
-    tooltip.appendChild(tooltipElement);
-    const parentHeight = tooltip.offsetHeight;
-    const tooltipHeight = tooltipElement.offsetHeight;
-    tooltipElement.style.left = "calc(100%)";
-    tooltipElement.style.top = `${parentHeight / 2 - tooltipHeight / 2}px`;
+    document.body.append(tooltipElement);
+    tooltipElement.style.left = `${posX}px`;
+    tooltipElement.style.top = `${posY}px`;
+    tooltipElement.style.transform = "translateY(-50%)";
     tooltip.addEventListener(
       "mouseout",
       () => {
-        tooltip.querySelector("[data-is-tooltip]")?.remove();
+        tooltipElement.remove();
       },
       { once: true },
     );
