@@ -30,6 +30,11 @@ urlpatterns = [
         name="createchannel",
     ),
     path(
+        "channel/<int:server_id>/delete/",
+        views.delete_server,
+        name="deleteserver",
+    ),
+    path(
         "channel/friends/<int:channel_id>/", views.channel_view, name="friend_channel"
     ),
     path(
@@ -39,6 +44,11 @@ urlpatterns = [
         "channel/<int:server_id>/<int:channel_id>/createchannel/",
         views.create_channel,
         name="create_channel",
+    ),
+    path(
+        "channel/<int:server_id>/<int:channel_id>/delete/",
+        views.delete_channel,
+        name="deletechannel",
     ),
     path(
         "channel/friends/<int:channel_id>/message/",

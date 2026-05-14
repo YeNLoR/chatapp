@@ -3,6 +3,7 @@ from channels.layers import get_channel_layer
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
+from django.db import transaction
 from django.db.models import Exists, OuterRef, Prefetch, Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
@@ -23,7 +24,7 @@ def register(request):
     if request.method == "POST":
         if form.is_valid():
             form.save()
-            return redirect(to="/login/")
+            return redirect("/#login")
     context = {"form": form}
     template = (
         "register.html" if request.META.get("HTTP_HX_REQUEST") else "register.html"
@@ -199,20 +200,58 @@ def friendship_response(request):
 def create_server(request):
     form = ServerForm(request.POST or None)
     if form.is_valid():
-        server = form.save()
-        server.users.add(request.user)
-        return redirect(f"/channel/{server.id}")
+        with transaction.atomic():
+            server = form.save(commit=False)
+            server.owner_id = request.user.id
+            server.save()
+            server.users.add(request.user)
+            general = Channel(name="Genel")
+            general.server_id = server.id
+            general.save()
+            server.channels.add(general)
+            return render(
+                request, "cotton/create_server_response.html", {"server": server}
+            )
+
+
+@login_required
+@require_POST
+def delete_server(request, server_id):
+    server = Server.objects.filter(id=server_id).first()
+    if request.user == server.owner:
+        server.delete()
+        return redirect("/")
+    return redirect("/")
 
 
 @login_required
 @require_POST
 def create_channel(request, server_id, channel_id=None):
     form = ChannelForm(request.POST or None)
+
+    class current_server:
+        def __init__(self) -> None:
+            self.id = server_id
+
     if form.is_valid():
         channel = form.save(commit=False)
         channel.server_id = server_id
         channel.save()
-        return redirect(f"/channel/{server_id}/{channel.id}")
+        return render(
+            request,
+            "cotton/channel_link.html",
+            {"item": channel, "current_server": current_server},
+        )
+
+
+@login_required
+@require_POST
+def delete_channel(request, server_id, channel_id):
+    channel = Channel.objects.filter(id=channel_id, server=server_id).first()
+    if request.user == channel.server.owner:
+        channel.delete()
+        return redirect(f"/channel/{server_id}")
+    return redirect(f"/channel/{server_id}")
 
 
 @login_required
@@ -221,7 +260,7 @@ def join_server(request):
     invite = request.POST.get("invite")
     server = Server.objects.filter(invite=invite).first()
     server.users.add(request.user)
-    return HttpResponseRedirect("/")
+    return render(request, "cotton/create_server_response.html", {"server": server})
 
 
 @login_required

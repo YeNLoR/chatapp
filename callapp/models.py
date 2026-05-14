@@ -31,6 +31,7 @@ class Friendship(models.Model):
 class Server(models.Model):
     name = models.CharField(max_length=100)
     img = models.ImageField(upload_to="servers/", default="el_bug50.png")
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     users = models.ManyToManyField(User, related_name="servers")
     invite = models.CharField(null=True, blank=True, default=uuid7)
     is_dm = models.BooleanField(default=False)

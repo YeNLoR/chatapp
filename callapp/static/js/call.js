@@ -2,6 +2,7 @@ let peer = null;
 let callSocket = null;
 let activeCall = null;
 let localStream = null;
+let remoteUserId = null;
 
 function connectCallSocket() {
   callSocket = new WebSocket("ws://" + window.location.host + "/ws/call/");
@@ -31,6 +32,7 @@ function initPeer() {
         activeCall = incomingCall;
         document.getElementById("incomingCallModal").close();
         document.getElementById("ongoingCallModal").showModal();
+        document.getElementById("ongoingCallOpener").classList.toggle("hidden");
       });
   });
 }
@@ -44,7 +46,7 @@ function showIncomingCallUI(data) {
     acceptCall(data.from_user_id)),
     incomingCallUI.showModal());
   document.getElementById("endOngoingCall").onclick = () => {
-    endCall(data.target_user_id);
+    endCall();
     document.getElementById("ongoingCallModal").close();
   };
 }
@@ -52,6 +54,7 @@ function showIncomingCallUI(data) {
 function handleSignal(data) {
   switch (data.signal_type) {
     case "call.offer":
+      remoteUserId = data.from_user_id;
       showIncomingCallUI(data);
       break;
 
@@ -64,6 +67,9 @@ function handleSignal(data) {
           activeCall = peer.call(data.peer_id, stream);
           activeCall.on("stream", showRemoteStream);
           document.getElementById("ongoingCallModal").showModal();
+          document
+            .getElementById("ongoingCallOpener")
+            .classList.toggle("hidden");
         });
       break;
 
@@ -73,12 +79,14 @@ function handleSignal(data) {
       break;
 
     case "call.end":
+      remoteUserId = null;
       cleanup();
       break;
   }
 }
 
 function callUser(targetUserId) {
+  remoteUserId = targetUserId;
   callSocket.send(
     JSON.stringify({
       type: "call.offer",
@@ -103,14 +111,28 @@ function acceptCall(fromUserId) {
   );
 }
 
-function endCall(targetUserId) {
+function rejectCall() {
+  if (remoteUserId) {
+    callSocket.send(
+      JSON.stringify({
+        type: "call.reject",
+        target_user_id: remoteUserId,
+      }),
+    );
+  }
+  document.getElementById("incomingCallModal").close();
+  remoteUserId = null;
+}
+
+function endCall() {
   callSocket.send(
     JSON.stringify({
       type: "call.end",
-      target_user_id: targetUserId,
+      target_user_id: remoteUserId,
     }),
   );
   cleanup();
+  remoteUserId = null;
 }
 
 function showLocalStream(stream) {
@@ -124,6 +146,9 @@ function showRemoteStream(stream) {
 function cleanup() {
   if (activeCall) activeCall.close();
   if (localStream) localStream.getTracks().forEach((t) => t.stop());
+  document.getElementById("incomingCallModal").close();
+  document.getElementById("ongoingCallModal").close();
+  document.getElementById("ongoingCallOpener").classList.add("hidden");
   activeCall = null;
   localStream = null;
 }

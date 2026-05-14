@@ -15,7 +15,11 @@
         <button id="incomingCallAccept" class="btn btn-success btn-circle">
           {% lucide "phone" %}
         </button>
-        <button id="incomingCallReject" class="btn btn-error btn-circle">
+        <button
+          id="incomingCallReject"
+          onclick="rejectCall"
+          class="btn btn-error btn-circle"
+        >
           {% lucide "phone" class="rotate-135" %}
         </button>
       </div>

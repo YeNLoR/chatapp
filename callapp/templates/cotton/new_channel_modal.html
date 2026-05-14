@@ -1,7 +1,13 @@
 <dialog id="newChannelModal" class="modal">
   <div class="modal-box">
-    <form action="createchannel/" method="post">
-      {% csrf_token %}
+    <form
+      action="createchannel/"
+      method="post"
+      hx-post="createchannel/"
+      hx-target="#newChannelModalButton"
+      hx-swap="beforebegin"
+      hx-on:htmx:after-request='document.getElementById("newChannelModal").close()'
+    >
       <label for="servername" class="input">
         kanal adı:
         <input name="{{ channel_form.name.html_name }}" type="text" />

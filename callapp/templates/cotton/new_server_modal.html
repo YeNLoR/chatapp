@@ -8,8 +8,14 @@
         aria-label="sunucu oluştur"
       />
       <div class="tab-content">
-        <form action="/createserver/" method="post">
-          {% csrf_token %}
+        <form
+          action="/createserver/"
+          method="post"
+          hx-post="/createserver/"
+          hx-target="#newServerModalButton"
+          hx-swap="beforebegin"
+          hx-on:htmx:after-request='document.getElementById("newServerModal").close()'
+        >
           <label for="servername" class="input mt-2">
             Sunucu adı:
             <input name="{{ server_form.name.html_name }}" type="text" />
@@ -25,8 +31,14 @@
         checked
       />
       <div class="tab-content">
-        <form action="/joinserver/" method="post">
-          {% csrf_token %}
+        <form
+          action="/joinserver/"
+          method="post"
+          hx-post="/joinserver/"
+          hx-target="#newServerModalButton"
+          hx-swap="beforebegin"
+          hx-on:htmx:after-request='document.getElementById("newServerModal").close()'
+        >
           <label for="invite" class="input mt-2">
             Davet kodu:
             <input name="invite" type="text" />

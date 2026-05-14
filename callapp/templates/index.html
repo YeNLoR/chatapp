@@ -32,69 +32,91 @@
     </div>
   </div>
   <div class="flex flex-1 flex-row overflow-hidden">
-    <div id="serverList" class="h-full flex-none overflow-y-scroll border-r">
-      <ul class="menu p-0">
-        {% if user.is_authenticated %}
-        <li class="">
-          <a
-            href="/channel/friends/"
-            class="flex flex-col p-1"
-            hx-get="/channel/friends/"
-            hx-target="#channelList"
-            hx-swap="innerHTML"
-            hx-push-url="true"
-            data-tooltip="Profil"
-          >
-            {% lucide "user" size="40" %}
-          </a>
-        </li>
-        {% for item in user.servers.all%} {% if not item.is_dm %}
-        <li>
-          <c-server-icon :server="item" />
-        </li>
-        {% endif %} {% endfor %}
-        <li>
-          <button
-            class="flex flex-col p-1"
-            data-modal="newServerModal"
-            data-tooltip="Sunucu ekle"
-          >
-            {% lucide "message-circle-plus" size="40" %}
-          </button>
-        </li>
-        <li>
-          <form action="/logout/" method="post">
-            {% csrf_token %}
-            <button class="">{% lucide "log-out" size="40" %}</button>
-          </form>
-        </li>
-        {% endif %} {% if not user.is_authenticated %}
-        <li>
-          <button
-            class="flex flex-col p-1"
-            data-modal="login"
-            data-tooltip="Giriş yap"
-          >
-            {% lucide "key-round" size="40" %}
-          </button>
-        </li>
-        <li>
-          <button
-            class="flex flex-col"
-            data-modal="register"
-            data-tooltip="Kayıt ol"
-          >
-            {% lucide "key-square" size="40" %}
-          </button>
-        </li>
-        {% endif %}
-      </ul>
-    </div>
-    <div
-      id="channelList"
-      class="h-full flex-none overflow-y-auto border-r min-[700px]:w-64"
-    >
-      {% block sidebar %} {% endblock %}
+    <div class="flex flex-col">
+      <div class="flex grow flex-row">
+        <div
+          id="serverList"
+          class="h-full flex-none overflow-y-scroll border-r"
+        >
+          <ul class="menu p-0">
+            {% if user.is_authenticated %}
+            <li class="">
+              <a
+                href="/channel/friends/"
+                class="flex flex-col p-1"
+                hx-get="/channel/friends/"
+                hx-target="#channelList"
+                hx-swap="innerHTML"
+                hx-push-url="true"
+                data-tooltip="Profil"
+              >
+                {% lucide "user" size="40" %}
+              </a>
+            </li>
+            {% for item in user.servers.all%} {% if not item.is_dm %}
+            <li>
+              <c-server-icon :server="item" />
+            </li>
+            {% endif %} {% endfor %}
+            <li id="newServerModalButton">
+              <button
+                class="flex flex-col p-1"
+                data-modal="newServerModal"
+                data-tooltip="Sunucu oluştur/katıl"
+              >
+                {% lucide "message-circle-plus" size="40" %}
+              </button>
+            </li>
+
+            {% endif %} {% if not user.is_authenticated %}
+            <li>
+              <button
+                class="flex flex-col p-1"
+                data-modal="login"
+                data-tooltip="Giriş yap"
+              >
+                {% lucide "log-in" size="40" %}
+              </button>
+            </li>
+            <li>
+              <button
+                class="flex flex-col"
+                data-modal="register"
+                data-tooltip="Kayıt ol"
+              >
+                {% lucide "user-round-plus" size="40" %}
+              </button>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+        <div
+          id="channelList"
+          class="h-full flex-none overflow-y-auto border-r min-[700px]:w-64"
+        >
+          {% block sidebar %} {% endblock %}
+        </div>
+      </div>
+      <div class="flex h-10 flex-row-reverse border-t border-r">
+        <ul class="menu p-0">
+          <li>
+            <button
+              id="ongoingCallOpener"
+              class="flex hidden flex-row p-1"
+              data-modal="ongoingCallModal"
+              data-tooltip="Devam eden çağrı"
+            >
+              {% lucide "phone-call" size="25" %}
+            </button>
+          </li>
+          <li>
+            <form class="flex flex-row p-1" action="/logout/" method="post">
+              {% csrf_token %}
+              <button class="">{% lucide "log-out" size="25" %}</button>
+            </form>
+          </li>
+        </ul>
+      </div>
     </div>
     <div id="messageList" class="h-full flex-1 overflow-hidden">
       {% block main %} {% endblock %}
