@@ -97,25 +97,31 @@
           {% block sidebar %} {% endblock %}
         </div>
       </div>
-      <div class="flex h-10 flex-row-reverse border-t border-r">
-        <ul class="menu p-0">
-          <li>
-            <button
-              id="ongoingCallOpener"
-              class="flex hidden flex-row p-1"
-              data-modal="ongoingCallModal"
-              data-tooltip="Devam eden çağrı"
-            >
-              {% lucide "phone-call" size="25" %}
-            </button>
-          </li>
-          <li>
-            <form class="flex flex-row p-1" action="/logout/" method="post">
-              {% csrf_token %}
-              <button class="">{% lucide "log-out" size="25" %}</button>
-            </form>
-          </li>
-        </ul>
+      <div
+        class="flex h-10 flex-row items-center justify-between border-t border-r"
+      >
+        <div class="flex flex-row">
+          <div class="avatar m-auto">
+            <div class="w-7 rounded-full">
+              <img src="{{user.avatar.url}}" />
+            </div>
+          </div>
+          <h1 class="m-auto">{{ user.username }}</h1>
+        </div>
+        <div class="flex flex-row">
+          <button
+            id="ongoingCallOpener"
+            class="flex hidden flex-row p-1"
+            data-modal="ongoingCallModal"
+            data-tooltip="Devam eden çağrı"
+          >
+            {% lucide "phone-call" size="25" %}
+          </button>
+          <form class="flex flex-row p-1" action="/logout/" method="post">
+            {% csrf_token %}
+            <button class="">{% lucide "log-out" size="25" %}</button>
+          </form>
+        </div>
       </div>
     </div>
     <div id="messageList" class="h-full flex-1 overflow-hidden">

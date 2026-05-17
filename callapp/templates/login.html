@@ -16,14 +16,14 @@
           pattern="[A-Za-z][A-Za-z0-9\-]*"
           minlength="3"
           maxlength="30"
-          title="kelime 3 ile 30 karakter arasında olmalı, sadece harf, rakam veya tire içerebilir"
+          title="Ad 3 ile 30 karakter arasında olmalı, sadece harf, rakam veya tire içerebilir"
           name="{{ form.username.html_name }}"
           id="{{ form.username.html_name }}"
           value="{{ form.username.value|default:''}}"
         />
       </label>
       <p class="validator-hint hidden">
-        Kelime 3 ile 30 karakter arasında olmalı sadece harf, rakam veya tire
+        Ad 3 ile 30 karakter arasında olmalı sadece harf, rakam veya tire
         içerebilir
       </p>
       <label class="input validator mt-2 min-w-full">

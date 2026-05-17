@@ -40,7 +40,7 @@ class Server(models.Model):
     def get_dm_server(cls, user1, user2):
         server_name = f"dm_{min(user1.id, user2.id)}_{max(user1.id, user2.id)}"
         server, created = cls.objects.get_or_create(
-            name=server_name, is_dm=True, defaults={"invite": None}
+            name=server_name, is_dm=True, owner_id=1, defaults={"invite": None}
         )
         if created:
             server.users.add(user1, user2)

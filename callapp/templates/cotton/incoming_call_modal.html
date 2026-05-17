@@ -1,4 +1,4 @@
-{%load lucide%}
+{%load lucide%} {% load static %}
 <dialog id="incomingCallModal" class="modal">
   <div class="modal-box max-w-48">
     <div class="flex flex-col">
@@ -17,7 +17,7 @@
         </button>
         <button
           id="incomingCallReject"
-          onclick="rejectCall"
+          onclick="rejectCall()"
           class="btn btn-error btn-circle"
         >
           {% lucide "phone" class="rotate-135" %}
@@ -25,6 +25,7 @@
       </div>
     </div>
   </div>
+  <audio id="ring" loop hidden src="{% static 'audio/ring.mp3' %}"></audio>
   <form method="dialog" class="modal-backdrop">
     <button>close</button>
   </form>

@@ -5,12 +5,65 @@ let localStream = null;
 let remoteUserId = null;
 
 function connectCallSocket() {
+  // Canlı ortamda ws:// yerine wss:// (SSL) kullanılması gerekebilir
   callSocket = new WebSocket("ws://" + window.location.host + "/ws/call/");
 
   callSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
     handleSignal(data);
   };
+}
+
+// Kamera veya mikrofon yoksa uygulamanın çökmesini engelleyen güvenli stream fonksiyonu
+async function getSafeLocalStream() {
+  try {
+    // Önce hem kamera hem mikrofon istemeyi dene
+    return await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    });
+  } catch (error) {
+    console.warn(
+      "Kamera ve mikrofon tam olarak açılamadı, alternatif deneniyor:",
+      error.name,
+    );
+
+    try {
+      // Sadece mikrofon dene (kamera yoksa)
+      return await navigator.mediaDevices.getUserMedia({
+        video: false,
+        audio: true,
+      });
+    } catch (audioError) {
+      console.warn(
+        "Mikrofon da bulunamadı, boş stream oluşturuluyor.",
+        audioError.name,
+      );
+
+      // Donanım tamamen yoksa WebRTC'nin patlamaması için sanal (boş) bir stream oluşturuyoruz
+      const canvas = document.createElement("canvas");
+      canvas.width = 640;
+      canvas.height = 480;
+      // Siyah bir ekran üretir
+      canvas.getContext("2d").fillRect(0, 0, canvas.width, canvas.height);
+      const videoStream = canvas.captureStream(30);
+
+      try {
+        // Varsa bir ses bağlamı oluştur, yoksa sadece boş video kalsın
+        const audioContext = new (
+          window.AudioContext || window.webkitAudioContext
+        )();
+        const oscillator = audioContext.createOscillator();
+        const dst = audioContext.createMediaStreamDestination();
+        oscillator.connect(dst); // Sessiz bir akış için gain ayarlanabilir, varsayılan kalsın
+        videoStream.addTrack(dst.stream.getAudioTracks()[0]);
+      } catch (e) {
+        console.error("AudioContext başlatılamadı", e);
+      }
+
+      return videoStream;
+    }
+  }
 }
 
 function initPeer() {
@@ -21,19 +74,19 @@ function initPeer() {
     window._myPeerId = id;
   });
 
-  peer.on("call", (incomingCall) => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        localStream = stream;
-        showLocalStream(localStream);
-        incomingCall.answer(stream);
-        incomingCall.on("stream", showRemoteStream);
-        activeCall = incomingCall;
-        document.getElementById("incomingCallModal").close();
-        document.getElementById("ongoingCallModal").showModal();
-        document.getElementById("ongoingCallOpener").classList.toggle("hidden");
-      });
+  // Gelen aramayı yanıtlama kısmı (Asenkron yapıldı)
+  peer.on("call", async (incomingCall) => {
+    // Güvenli şekilde medya akışını alıyoruz (Cihaz yoksa bile çökmez)
+    localStream = await getSafeLocalStream();
+
+    showLocalStream(localStream);
+    incomingCall.answer(localStream);
+    incomingCall.on("stream", showRemoteStream);
+    activeCall = incomingCall;
+
+    document.getElementById("incomingCallModal").close();
+    document.getElementById("ongoingCallModal").showModal();
+    document.getElementById("ongoingCallOpener").classList.toggle("hidden");
   });
 }
 
@@ -42,16 +95,21 @@ function showIncomingCallUI(data) {
   console.log(data);
   incomingCallUI.querySelector("#callerUsername").textContent =
     data.from_username;
-  ((incomingCallUI.querySelector("#incomingCallAccept").onclick = () =>
-    acceptCall(data.from_user_id)),
-    incomingCallUI.showModal());
+
+  incomingCallUI.querySelector("#incomingCallAccept").onclick = () =>
+    acceptCall(data.from_user_id);
+  incomingCallUI.showModal();
+  incomingCallUI.querySelector("#ring").play();
+  incomingCallUI.onclose = () => incomingCallUI.querySelector("#ring").pause();
   document.getElementById("endOngoingCall").onclick = () => {
-    endCall();
+    (endCall(),
+      document.getElementById("ongoingCallOpener").classList.toggle("hidden"));
     document.getElementById("ongoingCallModal").close();
   };
 }
 
-function handleSignal(data) {
+// handleSignal fonksiyonu async hale getirildi
+async function handleSignal(data) {
   switch (data.signal_type) {
     case "call.offer":
       remoteUserId = data.from_user_id;
@@ -59,18 +117,15 @@ function handleSignal(data) {
       break;
 
     case "call.answer":
-      navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
-        .then((stream) => {
-          localStream = stream;
-          showLocalStream(stream);
-          activeCall = peer.call(data.peer_id, stream);
-          activeCall.on("stream", showRemoteStream);
-          document.getElementById("ongoingCallModal").showModal();
-          document
-            .getElementById("ongoingCallOpener")
-            .classList.toggle("hidden");
-        });
+      // Arayan tarafta sinyal onaylandığında medya akışını güvenli alıyoruz
+      localStream = await getSafeLocalStream();
+
+      showLocalStream(localStream);
+      activeCall = peer.call(data.peer_id, localStream);
+      activeCall.on("stream", showRemoteStream);
+
+      document.getElementById("ongoingCallModal").showModal();
+      document.getElementById("ongoingCallOpener").classList.toggle("hidden");
       break;
 
     case "call.reject":
@@ -79,6 +134,7 @@ function handleSignal(data) {
       break;
 
     case "call.end":
+      document.getElementById("ongoingCallOpener").classList.toggle("hidden");
       remoteUserId = null;
       cleanup();
       break;
@@ -101,7 +157,7 @@ function callUser(targetUserId) {
 }
 
 function acceptCall(fromUserId) {
-  console.log("test");
+  console.log("Arama kabul edildi.");
   callSocket.send(
     JSON.stringify({
       type: "call.answer",
@@ -125,30 +181,46 @@ function rejectCall() {
 }
 
 function endCall() {
-  callSocket.send(
-    JSON.stringify({
-      type: "call.end",
-      target_user_id: remoteUserId,
-    }),
-  );
+  if (remoteUserId) {
+    callSocket.send(
+      JSON.stringify({
+        type: "call.end",
+        target_user_id: remoteUserId,
+      }),
+    );
+  }
   cleanup();
   remoteUserId = null;
 }
 
 function showLocalStream(stream) {
-  document.getElementById("localVideo").srcObject = stream;
+  const localVideo = document.getElementById("localVideo");
+  if (localVideo) localVideo.srcObject = stream;
 }
 
 function showRemoteStream(stream) {
-  document.getElementById("remoteVideo").srcObject = stream;
+  const remoteVideo = document.getElementById("remoteVideo");
+  if (remoteVideo) remoteVideo.srcObject = stream;
 }
 
 function cleanup() {
-  if (activeCall) activeCall.close();
-  if (localStream) localStream.getTracks().forEach((t) => t.stop());
-  document.getElementById("incomingCallModal").close();
-  document.getElementById("ongoingCallModal").close();
-  document.getElementById("ongoingCallOpener").classList.add("hidden");
+  if (activeCall) {
+    try {
+      activeCall.close();
+    } catch (e) {}
+  }
+  if (localStream) {
+    localStream.getTracks().forEach((t) => t.stop());
+  }
+
+  const incomingModal = document.getElementById("incomingCallModal");
+  const ongoingModal = document.getElementById("ongoingCallModal");
+  const ongoingOpener = document.getElementById("ongoingOpener");
+
+  if (incomingModal) incomingModal.close();
+  if (ongoingModal) ongoingModal.close();
+  if (ongoingOpener) ongoingOpener.classList.add("hidden");
+
   activeCall = null;
   localStream = null;
 }
@@ -164,8 +236,10 @@ function toggleAudio() {
       console.log(audioTrack.enabled ? "Audio Enabled" : "Audio Muted");
 
       const button = document.getElementById("ongoingMic");
-      button.classList.toggle("btn-success");
-      button.classList.toggle("btn-error");
+      if (button) {
+        button.classList.toggle("btn-success");
+        button.classList.toggle("btn-error");
+      }
     }
   }
 }
@@ -178,8 +252,10 @@ function toggleVideo() {
       console.log(videoTrack.enabled ? "Video Enabled" : "Video Disabled");
 
       const button = document.getElementById("ongoingCam");
-      button.classList.toggle("btn-success");
-      button.classList.toggle("btn-error");
+      if (button) {
+        button.classList.toggle("btn-success");
+        button.classList.toggle("btn-error");
+      }
     }
   }
 }

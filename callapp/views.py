@@ -39,9 +39,9 @@ def login_view(request):
             login(request, form.get_user())
             return redirect(to="/")
         else:
-            print("not valid")
+            return redirect("/login/")
     else:
-        print("wrong method")
+        return render(request, "login.html")
 
 
 def server_view(request, server_id):
@@ -170,7 +170,10 @@ def friendship_request(request):
         .first()
     )
     if not friend or friend.is_friends:
-        return HttpResponse(status=400)
+        return HttpResponse(
+            "<span hx-swap-oob='inlineHTML' id='friendRequestError'>Hata</span>",
+            status=200,
+        )
     Friendship.objects.create(from_user=request.user, to_user=friend)
     return redirect("profile")
 
