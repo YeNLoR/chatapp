@@ -1,5 +1,4 @@
 #!/usr/bin/fish
-cd /home/yenlor/Git/chatapp/
 source ./.venv/bin/activate.fish
 
 set SESSION_NAME django

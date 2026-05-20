@@ -10,7 +10,6 @@
     <script src="{% static 'js/htmx.min.js' %}"></script>
     <script defer src="{% static 'js/script.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js"></script>
-    <script defer src="{% static 'js/call.js' %}"></script>
     <title>Ne Var Ne Yok</title>
   </head>
   <body hx-headers='{"x-csrftoken": "{{csrf_token}}"}'>
@@ -40,5 +39,6 @@
     <c-register-modal />
     <c-incoming-call-modal />
     <c-ongoing-call-modal />
+    <c-lightbox-modal />
   </section>
 </html>

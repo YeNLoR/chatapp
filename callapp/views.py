@@ -277,9 +277,9 @@ def message(request, server_id=None, channel_id=None):
         message.save()
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-            f"chat_{channel_id}",
+            f"channel_{channel_id}",
             {
-                "type": "chat.message",
+                "type": "text_channel.message",
                 "message": message.message,
                 "username": request.user.username,
                 "src": request.user.avatar.url,
