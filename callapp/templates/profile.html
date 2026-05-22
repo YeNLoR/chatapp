@@ -15,16 +15,17 @@
     <div class="flex flex-row justify-between">
       <a
         href="/channel/friends/{{item.channel_id}}/"
-        class="text-base font-medium"
+        class="absolute inset-0 z-10 flex grow text-base font-medium"
         hx-get="/channel/friends/{{item.channel_id}}/"
         hx-target="#messageList"
         hx-swap="innerHTML"
         hx-push-url="true"
-        >{{item.username}}
+      >
       </a>
+      {{item.username}}
       <button
         onclick="callUser({{item.id}})"
-        class="btn btn-circle btn-ghost btn-success h-6 w-6"
+        class="btn btn-circle btn-ghost btn-success z-20 h-6 w-6"
       >
         {% lucide "phone-call" %}
       </button>

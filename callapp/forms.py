@@ -22,6 +22,12 @@ class ChannelForm(forms.ModelForm):
         fields = ["name"]
 
 
+class VoiceChannelForm(forms.ModelForm):
+    class Meta:
+        model = models.VoiceChannel
+        fields = ["name"]
+
+
 class MessageForm(forms.ModelForm):
     class Meta:
         model = models.Message

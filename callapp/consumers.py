@@ -69,10 +69,11 @@ class RoomConsumer(WebsocketConsumer):
             async_to_sync(self.channel_layer.group_discard)(
                 self.text_channel_group, self.channel_name
             )
-        self.text_channel_group = data["text_channel"]
-        async_to_sync(self.channel_layer.group_add)(
-            self.text_channel_group, self.channel_name
-        )
+        if auth_consumer(data["text_channel"], self.user, "text"):
+            self.text_channel_group = "channel_" + data["text_channel"]
+            async_to_sync(self.channel_layer.group_add)(
+                self.text_channel_group, self.channel_name
+            )
 
     def text_channel_leave(self, data):
         if self.text_channel_group:
@@ -108,10 +109,12 @@ class RoomConsumer(WebsocketConsumer):
                     "user_id": self.user.id,
                 },
             )
-        self.voice_channel_group = data["voice_channel"]
-        async_to_sync(self.channel_layer.group_add)(
-            self.voice_channel_group, self.channel_name
-        )
+        if auth_consumer(data["voice_channel"], self.user, "voice"):
+            self.voice_channel_group = "voicechannel_" + data["voice_channel"]
+            async_to_sync(self.channel_layer.group_add)(
+                self.voice_channel_group, self.channel_name
+            )
+            print("başarı")
 
     def voice_channel_call(self, data):
         if self.voice_channel_group:

@@ -30,6 +30,11 @@ urlpatterns = [
         name="createchannel",
     ),
     path(
+        "channel/<int:server_id>/createvoicechannel/",
+        views.create_voice_channel,
+        name="create_voice_channel",
+    ),
+    path(
         "channel/<int:server_id>/delete/",
         views.delete_server,
         name="deleteserver",
@@ -39,11 +44,6 @@ urlpatterns = [
     ),
     path(
         "channel/<int:server_id>/<int:channel_id>/", views.channel_view, name="channel"
-    ),
-    path(
-        "channel/<int:server_id>/<int:channel_id>/createchannel/",
-        views.create_channel,
-        name="create_channel",
     ),
     path(
         "channel/<int:server_id>/<int:channel_id>/delete/",

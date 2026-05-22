@@ -30,7 +30,7 @@ function joinTextChannel(textChannelId) {
   chatSocket.send(
     JSON.stringify({
       type: "text_channel.join",
-      text_channel: `channel_${textChannelId}`,
+      text_channel: `${textChannelId}`,
     }),
   );
 }
@@ -155,7 +155,7 @@ function joinVoiceChannel(voiceChannelId) {
   chatSocket.send(
     JSON.stringify({
       type: "voice_channel.join",
-      voice_channel: `voice_channel_${voiceChannelId}`,
+      voice_channel: `${voiceChannelId}`,
     }),
   );
 }

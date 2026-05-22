@@ -1,30 +1,24 @@
 {%load lucide%}
 <li class="grow">
   <div class="flex flex-row">
-    <a
-      href="/channel/{{item.server.id}}/{{item.id}}/"
+    <button
       class="absolute inset-0 flex grow text-base font-medium"
-      hx-get="/channel/{{item.server.id}}/{{item.id}}/"
-      hx-target="#messageList"
-      hx-swap="innerHTML"
-      hx-push-url="true"
-      onclick="joinTextChannel('{{item.id}}')"
-    >
-    </a>
-    {{item.name}}
+      onclick="joinVoiceChannel('{{item.id}}')"
+    ></button>
+    {% lucide "volume-2" %}{{item.name}}
     <button
       class="btn btn-ghost btn-circle dropdown ml-auto flex h-7 w-7"
       hx-trigger="click consume"
-      popovertarget="channelsettingspopover{{item.id}}"
-      style="anchor-name: --channelsettingspopbutton{{item.id}}"
+      popovertarget="vcpopover{{item.id}}"
+      style="anchor-name: --vcpopbutton{{item.id}}"
     >
       {% lucide "ellipsis-vertical" %}
     </button>
     <span
       class="dropdown bg-reverse color-reverse -z-10 flex flex-col items-center p-2 shadow-sm"
       popover
-      id="channelsettingspopover{{item.id}}"
-      style="position-anchor: --channelsettingspopbutton{{item.id}}; position-area: bottom"
+      id="vcpopover{{item.id}}"
+      style="position-anchor: --vcpopbutton{{item.id}}; position-area: bottom"
       ><form
         method="post"
         action="/channel/{{current_server.id}}/{{item.id}}/delete/"

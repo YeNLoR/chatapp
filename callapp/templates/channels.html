@@ -55,6 +55,10 @@
   {% for item in current_server.channels.all%}
   <c-channel-link />
   {% endfor %}
+  <div id="channelsEnd"></div>
+  {% for item in current_server.voice_channels.all%}
+  <c-voice-channel-link />
+  {% endfor %}
   <li id="newChannelModalButton">
     <button class="btn btn-ghost" data-modal="newChannelModal">
       Kanal ekle
@@ -64,6 +68,7 @@
     <button class="btn btn-ghost">Sunucuyu düzenle</button>
   </li>
 </ul>
+<c-new-channel-modal />
 <!--prettier-ignore-->
 {% endpartialdef %} {% block sidebar %} {% partial content %} {% endblock %}
 {% block main %} {% endblock %}

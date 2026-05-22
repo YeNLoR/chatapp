@@ -1,19 +1,57 @@
+{%load lucide%}
 <dialog id="newChannelModal" class="modal">
   <div class="modal-box">
-    <form
-      action="createchannel/"
-      method="post"
-      hx-post="createchannel/"
-      hx-target="#newChannelModalButton"
-      hx-swap="beforebegin"
-      hx-on:htmx:after-request='document.getElementById("newChannelModal").close()'
-    >
-      <label for="servername" class="input">
-        kanal adı:
-        <input name="{{ channel_form.name.html_name }}" type="text" />
-      </label>
-      <button type="submit" class="btn btn-ghost">ekle</button>
-    </form>
+    <div class="tabs tabs-border">
+      <input
+        type="radio"
+        name="channelmodaloption"
+        class="tab"
+        aria-label="Yazılı"
+        checked
+      />
+      <div class="tab-content">
+        <form
+          hx-post="/channel/{{current_server.id}}/createchannel/"
+          hx-target="#channelsEnd"
+          hx-swap="beforebegin"
+          hx-on:htmx:after-request='document.getElementById("newChannelModal").close()'
+        >
+          <label for="channelName" class="input">
+            {% lucide "text-cursor" %}:
+            <input
+              id="channelName"
+              name="{{ channel_form.name.html_name }}"
+              type="text"
+            />
+          </label>
+          <button type="submit" class="btn btn-ghost">ekle</button>
+        </form>
+      </div>
+      <input
+        type="radio"
+        name="channelmodaloption"
+        class="tab"
+        aria-label="Sesli"
+      />
+      <div class="tab-content">
+        <form
+          hx-post="/channel/{{current_server.id}}/createvoicechannel/"
+          hx-target="#channelsEnd"
+          hx-swap="beforebegin"
+          hx-on:htmx:after-request='document.getElementById("newChannelModal").close()'
+        >
+          <label for="VCName" class="input">
+            {% lucide "volume-2" %}:
+            <input
+              id="VCName"
+              name="{{ voice_channel_form.name.html_name }}"
+              type="text"
+            />
+          </label>
+          <button type="submit" class="btn btn-ghost">ekle</button>
+        </form>
+      </div>
+    </div>
   </div>
   <form method="dialog" class="modal-backdrop">
     <button>close</button>

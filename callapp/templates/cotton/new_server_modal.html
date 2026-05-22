@@ -5,7 +5,7 @@
         type="radio"
         name="servermodaloption"
         class="tab"
-        aria-label="sunucu oluştur"
+        aria-label="Sunucu oluştur"
       />
       <div class="tab-content">
         <form
@@ -16,9 +16,13 @@
           hx-swap="beforebegin"
           hx-on:htmx:after-request='document.getElementById("newServerModal").close()'
         >
-          <label for="servername" class="input mt-2">
+          <label for="serverName" class="input mt-2">
             Sunucu adı:
-            <input name="{{ server_form.name.html_name }}" type="text" />
+            <input
+              id="serverName"
+              name="{{ server_form.name.html_name }}"
+              type="text"
+            />
           </label>
           <button type="submit" class="btn btn-ghost">Ekle</button>
         </form>
@@ -27,7 +31,7 @@
         type="radio"
         name="servermodaloption"
         class="tab"
-        aria-label="sunucuya katıl"
+        aria-label="Sunucuya katıl"
         checked
       />
       <div class="tab-content">
@@ -41,7 +45,7 @@
         >
           <label for="invite" class="input mt-2">
             Davet kodu:
-            <input name="invite" type="text" />
+            <input id="invite" name="invite" type="text" />
           </label>
           <button type="submit" class="btn btn-ghost">Katıl</button>
         </form>

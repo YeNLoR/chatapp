@@ -55,14 +55,21 @@ class Channel(models.Model):
     )
 
 
-def auth_consumer(channel_id, user):
-    server = (
-        Server.objects.filter(channels__id=channel_id)
-        .annotate(is_in=Exists(Server.objects.filter(id=OuterRef("id"), users=user)))
-        .first()
+class VoiceChannel(models.Model):
+    name = models.CharField(max_length=200)
+    server = models.ForeignKey(
+        Server, on_delete=models.CASCADE, related_name="voice_channels"
     )
-    if server:
-        if server.is_in:
+
+
+def auth_consumer(channel_id, user, type):
+    if type == "text":
+        channel = Channel.objects.filter(id=channel_id, server__users=user)
+        if channel:
+            return True
+    elif type == "voice":
+        voice_channel = VoiceChannel.objects.filter(id=channel_id, server__users=user)
+        if voice_channel:
             return True
     return False
 

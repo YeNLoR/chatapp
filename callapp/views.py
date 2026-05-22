@@ -9,7 +9,13 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from .forms import ChannelForm, CustomUserCreationForm, MessageForm, ServerForm
+from .forms import (
+    ChannelForm,
+    CustomUserCreationForm,
+    MessageForm,
+    ServerForm,
+    VoiceChannelForm,
+)
 from .models import Channel, Friendship, Message, Server
 
 User = get_user_model()
@@ -243,6 +249,26 @@ def create_channel(request, server_id, channel_id=None):
         return render(
             request,
             "cotton/channel_link.html",
+            {"item": channel, "current_server": current_server},
+        )
+
+
+@login_required
+@require_POST
+def create_voice_channel(request, server_id, channel_id=None):
+    form = VoiceChannelForm(request.POST or None)
+
+    class current_server:
+        def __init__(self) -> None:
+            self.id = server_id
+
+    if form.is_valid():
+        channel = form.save(commit=False)
+        channel.server_id = server_id
+        channel.save()
+        return render(
+            request,
+            "cotton/voice_channel_link.html",
             {"item": channel, "current_server": current_server},
         )
 
