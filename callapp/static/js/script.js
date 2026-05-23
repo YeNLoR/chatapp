@@ -15,15 +15,34 @@ function connectWebsocket() {
     if (currentPathArray.length === 3 && currentPathArray[0] === "channel") {
       joinTextChannel(currentPathArray[2]);
     }
+    if (
+      currentPathArray.length > 1 &&
+      currentPathArray[0] === "channel" &&
+      currentPath[1] !== "friends"
+    ) {
+      joinServerView(currentPathArray[1]);
+    }
   };
   chatSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
+    console.log(data);
     if (data.type === "new_message") {
       createMessage(data);
+    } else if (["vc.state", "vc.joined", "vc.left"].includes(data.type)) {
+      updateVC(data);
     } else {
       handleSignal(data);
     }
   };
+}
+
+function joinServerView(serverId) {
+  chatSocket.send(
+    JSON.stringify({
+      type: "server_view.join",
+      server_id: serverId,
+    }),
+  );
 }
 
 function joinTextChannel(textChannelId) {
@@ -46,6 +65,39 @@ function createMessage(data) {
   cloneUsername.innerHTML = data.username;
   cloneMessage.innerHTML = data.message;
   document.getElementById("messages").appendChild(clone);
+}
+
+function updateVC(data) {
+  function vcAddUser(channelId, username, avatar) {
+    const div = document.createElement("div");
+    const img = document.createElement("img");
+    const span = document.createElement("span");
+    div.id = `${channelId}_${username}`;
+    div.className = "flex flex-row h-6 gap-1 w-full";
+    img.className = "size-6";
+    img.src = avatar;
+    span.innerHTML = username;
+    div.appendChild(img);
+    div.appendChild(span);
+    document.getElementById(channelId).appendChild(div);
+  }
+  if (data.type === "vc.joined") {
+    vcAddUser(data.channel_id, data.username, data.avatar);
+  } else if (data.type === "vc.left") {
+    document.getElementById(`${data.channel_id}_${data.username}`)?.remove();
+  } else if (data.type === "vc.state") {
+    for (const channel in data) {
+      if (channel === "type") {
+        continue;
+      }
+      const channelId = channel;
+      for (const user in data[channel]) {
+        const username = user;
+        const avatar = data[channel][username].avatar;
+        vcAddUser(channelId, username, avatar);
+      }
+    }
+  }
 }
 
 document.addEventListener("click", (event) => {
@@ -98,45 +150,52 @@ document.addEventListener("mouseover", (event) => {
 });
 
 async function getSafeLocalStream() {
+  let audioStream;
   try {
-    return await navigator.mediaDevices.getUserMedia({
+    audioStream = await navigator.mediaDevices.getUserMedia({
       video: false,
       audio: true,
     });
   } catch (error) {
     console.warn(
-      "Kamera ve mikrofon bulunamadı, sadece mikrofon deneniyor:",
+      "Mikrofon bulunamadı, boş ses kanalı oluşturuluyor.",
       error.name,
     );
     try {
-      return await navigator.mediaDevices.getUserMedia({
-        video: false,
-        audio: true,
-      });
-    } catch (audioError) {
-      console.warn(
-        "Mikrofon bulunamadı, boş yayın oluşturuluyor.",
-        audioError.name,
-      );
-      const canvas = document.createElement("canvas");
-      canvas.width = 640;
-      canvas.height = 480;
-      canvas.getContext("2d").fillRect(0, 0, canvas.width, canvas.height);
-      const videoStream = canvas.captureStream(30);
-      try {
-        const audioContext = new (
-          window.AudioContext || window.webkitAudioContext
-        )();
-        const oscillator = audioContext.createOscillator();
-        const dst = audioContext.createMediaStreamDestination();
-        oscillator.connect(dst);
-        videoStream.addTrack(dst.stream.getAudioTracks()[0]);
-      } catch (e) {
-        console.error("AudioContext başlatılamadı", e);
-      }
-      return videoStream;
+      const audioContext = new (
+        window.AudioContext || window.webkitAudioContext
+      )();
+      const dst = audioContext.createMediaStreamDestination();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+      oscillator.connect(gainNode);
+      gainNode.connect(dst);
+      oscillator.start();
+      audioStream = dst.stream;
+    } catch (e) {
+      console.error("AudioContext failed", e);
+      audioStream = new MediaStream();
     }
   }
+  const canvas = document.createElement("canvas");
+  canvas.width = 1;
+  canvas.height = 1;
+  const ctx = canvas.getContext("2d");
+  if (ctx) {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, 1, 1);
+  }
+  const canvasStream = canvas.captureStream(1);
+  const dummyVideoTrack = canvasStream.getVideoTracks()[0];
+  const finalStream = new MediaStream();
+  if (audioStream.getAudioTracks()[0]) {
+    finalStream.addTrack(audioStream.getAudioTracks()[0]);
+  }
+  if (dummyVideoTrack) {
+    finalStream.addTrack(dummyVideoTrack);
+  }
+  return finalStream;
 }
 
 function showLocalStream(stream) {
@@ -149,6 +208,7 @@ async function startGroupCall(roomName) {
   showLocalStream(localStream);
   initPeer(roomName);
   joinVoiceChannel(roomName);
+  document.getElementById("ongoingCallModal").showModal();
 }
 
 function joinVoiceChannel(voiceChannelId) {

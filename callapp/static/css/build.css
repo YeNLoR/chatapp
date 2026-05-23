@@ -13,6 +13,8 @@
     --text-base--line-height: calc(1.5 / 1);
     --font-weight-medium: 500;
     --font-weight-bold: 700;
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --default-transition-duration: 150ms;
     --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     --default-font-family: var(--font-sans);
@@ -1678,6 +1680,10 @@
       width: var(--size);
       height: var(--size);
     }
+  }
+  .size-6 {
+    width: calc(var(--spacing) * 6);
+    height: calc(var(--spacing) * 6);
   }
   .size-10 {
     width: calc(var(--spacing) * 10);

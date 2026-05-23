@@ -1,7 +1,8 @@
 Django
+django-cotton
+django-types
 Daphne
 channels
 channels-redis
-django-cotton
 lucide[django]
 Pillow

@@ -1,34 +1,36 @@
 {%load lucide%}
 <li class="grow">
-  <div class="flex flex-row">
-    <button
-      class="absolute inset-0 flex grow text-base font-medium"
-      onclick="joinVoiceChannel('{{item.id}}')"
-    ></button>
-    {% lucide "volume-2" %}{{item.name}}
-    <button
-      class="btn btn-ghost btn-circle dropdown ml-auto flex h-7 w-7"
-      hx-trigger="click consume"
-      popovertarget="vcpopover{{item.id}}"
-      style="anchor-name: --vcpopbutton{{item.id}}"
-    >
-      {% lucide "ellipsis-vertical" %}
-    </button>
-    <span
-      class="dropdown bg-reverse color-reverse -z-10 flex flex-col items-center p-2 shadow-sm"
-      popover
-      id="vcpopover{{item.id}}"
-      style="position-anchor: --vcpopbutton{{item.id}}; position-area: bottom"
-      ><form
-        method="post"
-        action="/channel/{{current_server.id}}/{{item.id}}/delete/"
+  <div id="voicechannel_{{item.id}}" class="flex flex-col">
+    <div class="flex w-full flex-row">
+      <button
+        class="absolute inset-0 flex grow text-base font-medium"
+        onclick="startGroupCall('{{item.id}}')"
+      ></button>
+      {% lucide "volume-2" %}{{item.name}}
+      <button
+        class="btn btn-ghost btn-circle dropdown ml-auto flex h-7 w-7"
+        hx-trigger="click consume"
+        popovertarget="vcpopover{{item.id}}"
+        style="anchor-name: --vcpopbutton{{item.id}}"
       >
-        {% csrf_token %}
-        <button class="btn btn-ghost">{% lucide "trash" %}</button>
-      </form>
-      <form>
-        <button class="btn btn-ghost">{% lucide "square-pen" %}</button>
-      </form>
-    </span>
+        {% lucide "ellipsis-vertical" %}
+      </button>
+      <span
+        class="dropdown bg-reverse color-reverse -z-10 flex flex-col items-center p-2 shadow-sm"
+        popover
+        id="vcpopover{{item.id}}"
+        style="position-anchor: --vcpopbutton{{item.id}}; position-area: bottom"
+        ><form
+          method="post"
+          action="/channel/{{current_server.id}}/{{item.id}}/delete/"
+        >
+          {% csrf_token %}
+          <button class="btn btn-ghost">{% lucide "trash" %}</button>
+        </form>
+        <form>
+          <button class="btn btn-ghost">{% lucide "square-pen" %}</button>
+        </form>
+      </span>
+    </div>
   </div>
 </li>
