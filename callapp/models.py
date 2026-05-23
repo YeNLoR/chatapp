@@ -45,7 +45,10 @@ class Server(models.Model):
         if created:
             server.users.add(user1, user2)
         channel, _ = Channel.objects.get_or_create(name="direct", server=server)
-        return server, channel
+        voice_channel, _ = VoiceChannel.objects.get_or_create(
+            name="direct", server=server
+        )
+        return server, channel, voice_channel
 
 
 class Channel(models.Model):

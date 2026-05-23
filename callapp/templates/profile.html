@@ -24,7 +24,7 @@
       </a>
       {{item.username}}
       <button
-        onclick="callUser({{item.id}})"
+        onclick="startGroupCall('{{item.voice_channel_id}}')"
         class="btn btn-circle btn-ghost btn-success z-20 h-6 w-6"
       >
         {% lucide "phone-call" %}

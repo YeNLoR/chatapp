@@ -108,9 +108,10 @@ def channel_view(request, server_id=None, channel_id=None):
         )
         friend_list = User.objects.filter(friend_list_filters)
         for friend in friend_list:
-            server, channel = Server.get_dm_server(request.user, friend)
+            server, channel, voice_channel = Server.get_dm_server(request.user, friend)
             friend.server_id = server.id
             friend.channel_id = channel.id
+            friend.voice_channel_id = voice_channel.id
         context = {
             "friend_list": friend_list,
             "current_channel": channel,
@@ -140,9 +141,10 @@ def profile(request):
     )
     friend_list = User.objects.filter(friend_list_filters)
     for friend in friend_list:
-        server, channel = Server.get_dm_server(request.user, friend)
+        server, channel, voice_channel = Server.get_dm_server(request.user, friend)
         friend.server_id = server.id
         friend.channel_id = channel.id
+        friend.voice_channel_id = voice_channel.id
     context = {"friend_list": friend_list}
     template = (
         "profile.html#content"
