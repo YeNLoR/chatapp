@@ -46,6 +46,7 @@ class RoomConsumer(WebsocketConsumer):
         self.user = self.scope.get("user")
         self.user_groups = []
         self.server_view_group = None
+        self.active_call_server = None
         self.voice_channel_group = None
         self.text_channel_group = None
         if self.user and self.user.is_authenticated:
@@ -170,6 +171,7 @@ class RoomConsumer(WebsocketConsumer):
                         "avatar": self.user.avatar.url,
                     },
                 )
+                self.active_call_server = self.server_view_group
 
     def voice_channel_leave(self, data=None):
         if self.voice_channel_group:
@@ -180,24 +182,24 @@ class RoomConsumer(WebsocketConsumer):
                     "user_id": self.user.id,
                 },
             )
-            if self.server_view_group:
-                async_to_sync(self.channel_layer.group_send)(
-                    self.server_view_group,
-                    {
-                        "type": "vc.left",
-                        "channel_id": self.voice_channel_group,
-                        "username": self.user.username,
-                        "avatar": self.user.avatar.url,
-                    },
-                )
             async_to_sync(self.channel_layer.group_discard)(
                 self.voice_channel_group, self.channel_name
             )
-            vc_remove_user(
-                self.server_view_group, self.voice_channel_group, self.user.username
+        if self.active_call_server:
+            async_to_sync(self.channel_layer.group_send)(
+                self.active_call_server,
+                {
+                    "type": "vc.left",
+                    "channel_id": self.voice_channel_group,
+                    "username": self.user.username,
+                    "avatar": self.user.avatar.url,
+                },
             )
-
+            vc_remove_user(
+                self.active_call_server, self.voice_channel_group, self.user.username
+            )
         self.voice_channel_group = None
+        self.active_call_server = None
 
     def call_broadcast_joined(self, event):
         self.send(text_data=json.dumps(event))
