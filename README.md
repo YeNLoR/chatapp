@@ -9,13 +9,9 @@ nodejs ve node package manager
 
 adımlar bir linux işletim sistemi ve fish shell kullandığınızı varsayıyor, farklı platfomlarda bazı komutları değiştirmeniz gerekecektir.
 1) repoyu klonla:
-
 ```
-
 git clone https://github.com/YeNLoR/chatapp.git
-
 ```
-
 2) chatapp klasörünü aç:
 ```
 cd chatapp
