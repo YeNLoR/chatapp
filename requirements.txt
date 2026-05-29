@@ -10,3 +10,4 @@ channels-redis
 lucide[django]
 Pillow
 psycopg2
+binary
