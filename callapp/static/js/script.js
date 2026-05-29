@@ -25,15 +25,31 @@ function connectWebsocket() {
   };
   chatSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    console.log(data);
     if (data.type === "new_message") {
       createMessage(data);
     } else if (["vc.state", "vc.joined", "vc.left"].includes(data.type)) {
+      const currentPath = window.location.pathname.trim().slice(1, -1);
+      const currentPathArray = currentPath.split("/");
+      if (currentPathArray[1] == "friends") return;
       updateVC(data);
+    } else if (data.type === "vc.invite") {
+      showIncomingCall(data);
     } else {
       handleSignal(data);
     }
   };
+}
+
+function showIncomingCall(data) {
+  const incomingCallModal = document.getElementById("incomingCallModal");
+  incomingCallModal.querySelector("#callerUsername").textContent =
+    data.from.username;
+  incomingCallModal.querySelector("#callerAvatar").src = data.from.avatar;
+  incomingCallModal.querySelector("#incomingCallAccept").onclick = () => {
+    startGroupCall(data.channel_id);
+    incomingCallModal.close();
+  };
+  incomingCallModal.showModal();
 }
 
 function joinServerView(serverId) {
@@ -43,6 +59,10 @@ function joinServerView(serverId) {
       server_id: serverId,
     }),
   );
+}
+
+function leaveServerView() {
+  chatSocket.send(JSON.stringify({ type: "server_view.leave" }));
 }
 
 function joinTextChannel(textChannelId) {
@@ -65,6 +85,16 @@ function createMessage(data) {
   cloneUsername.innerHTML = data.username;
   cloneMessage.innerHTML = data.message;
   document.getElementById("messages").appendChild(clone);
+}
+
+function callInvite(username, channelId) {
+  chatSocket.send(
+    JSON.stringify({
+      type: "voice_channel.invite",
+      username: username,
+      channel_id: channelId,
+    }),
+  );
 }
 
 function updateVC(data) {
@@ -223,7 +253,6 @@ function joinVoiceChannel(voiceChannelId) {
 function initPeer(roomName) {
   peer = new Peer();
   peer.on("open", (id) => {
-    console.log("My Peer ID:", id);
     window._myPeerId = id;
     chatSocket.send(
       JSON.stringify({

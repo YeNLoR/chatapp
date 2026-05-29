@@ -6,12 +6,6 @@ from django.core.cache import cache
 
 from .models import auth_consumer
 
-example = {
-    "server_id": {
-        "voice_channel_id": {"username": {"name": "username", "avatar": "avatar_url"}}
-    }
-}
-
 
 def vc_add_user(server_id, channel_id, username, avatar):
     key = f"voice:{server_id}"
@@ -51,7 +45,7 @@ class RoomConsumer(WebsocketConsumer):
         self.text_channel_group = None
         if self.user and self.user.is_authenticated:
             self.user_groups = [
-                f"user_{self.user.id}",
+                f"user_{self.user.username}",
             ]
             servers = self.user.servers.only("id").all()
             for server in servers:
@@ -85,6 +79,7 @@ class RoomConsumer(WebsocketConsumer):
                 "voice_channel.join": self.voice_channel_join,
                 "voice_channel.call": self.voice_channel_call,
                 "voice_channel.leave": self.voice_channel_leave,
+                "voice_channel.invite": self.voice_channel_invite,
             }
             handler = handlers.get(data["type"])
             if handler:
@@ -92,11 +87,12 @@ class RoomConsumer(WebsocketConsumer):
 
     def server_view_join(self, data):
         self.server_view_leave(data)
-        self.server_view_group = "server_view" + data["server_id"]
-        async_to_sync(self.channel_layer.group_add)(
-            self.server_view_group, self.channel_name
-        )
-        self.send(json.dumps(get_server_vc(self.server_view_group)))
+        if auth_consumer(data["server_id"], self.user, "server"):
+            self.server_view_group = "server_view" + data["server_id"]
+            async_to_sync(self.channel_layer.group_add)(
+                self.server_view_group, self.channel_name
+            )
+            self.send(json.dumps(get_server_vc(self.server_view_group)))
 
     def server_view_leave(self, data=None):
         if self.server_view_group:
@@ -201,14 +197,25 @@ class RoomConsumer(WebsocketConsumer):
         self.voice_channel_group = None
         self.active_call_server = None
 
-    def call_broadcast_joined(self, event):
+    def voice_channel_invite(self, data):
+        if data.get("username"):
+            async_to_sync(self.channel_layer.group_send)(
+                f"user_{data['username']}",
+                {
+                    "type": "vc.invite",
+                    "from": {
+                        "username": self.user.username,
+                        "avatar": self.user.avatar.url,
+                    },
+                    "channel_id": data["channel_id"],
+                },
+            )
+
+    def send_broadcast_event(self, event):
         self.send(text_data=json.dumps(event))
 
-    def call_broadcast_left(self, event):
-        self.send(text_data=json.dumps(event))
-
-    def vc_joined(self, event):
-        self.send(text_data=json.dumps(event))
-
-    def vc_left(self, event):
-        self.send(text_data=json.dumps(event))
+    call_broadcast_joined = send_broadcast_event
+    call_broadcast_left = send_broadcast_event
+    vc_joined = send_broadcast_event
+    vc_invite = send_broadcast_event
+    vc_left = send_broadcast_event

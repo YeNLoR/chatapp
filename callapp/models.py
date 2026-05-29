@@ -65,14 +65,20 @@ class VoiceChannel(models.Model):
     )
 
 
-def auth_consumer(channel_id, user, type):
+def auth_consumer(id, user, type):
     if type == "text":
-        channel = Channel.objects.filter(id=channel_id, server__users=user)
+        channel = Channel.objects.filter(id=id, server__users=user)
         if channel:
             return True
     elif type == "voice":
-        voice_channel = VoiceChannel.objects.filter(id=channel_id, server__users=user)
+        voice_channel = VoiceChannel.objects.filter(id=id, server__users=user)
         if voice_channel:
+            return True
+    elif type == "server":
+        if not id.isnumeric():
+            return False
+        server = Server.objects.filter(id=id, users=user)
+        if server:
             return True
     return False
 

@@ -20,11 +20,12 @@
         hx-target="#messageList"
         hx-swap="innerHTML"
         hx-push-url="true"
+        onclick="joinTextChannel('{{item.channel_id}}')"
       >
       </a>
       {{item.username}}
       <button
-        onclick="startGroupCall('{{item.voice_channel_id}}')"
+        onclick="startGroupCall('{{item.voice_channel_id}}'); callInvite('{{item.username}}','{{item.voice_channel_id}}')"
         class="btn btn-circle btn-ghost btn-success z-20 h-6 w-6"
       >
         {% lucide "phone-call" %}
