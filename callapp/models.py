@@ -1,8 +1,7 @@
-from uuid import uuid7
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Exists, OuterRef
+from uuid_utils import uuid7
 
 
 class User(AbstractUser):

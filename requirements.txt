@@ -1,6 +1,9 @@
+python-dotenv
+uuid-utils
 Django
 django-cotton
 django-types
+django-cleanup
 Daphne
 channels
 channels-redis

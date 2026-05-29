@@ -1,0 +1,19 @@
+services:
+  nvny:
+    container_name: nvny
+    build: testnvny/
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - postgresql
+  redis:
+    container_name: redis
+    image: redis:7.2-alpine
+  postgresql:
+    container_name: postgresql
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}

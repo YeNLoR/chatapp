@@ -8,7 +8,8 @@ const userPeerMap = {}; // Format: { userId: peerId }
 const messageTemplate = document.getElementById("messageTemplate");
 
 function connectWebsocket() {
-  chatSocket = new WebSocket("ws://" + window.location.host + "/");
+  const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+  chatSocket = new WebSocket(wsProtocol + window.location.host + "/");
   chatSocket.onopen = () => {
     const currentPath = window.location.pathname.trim().slice(1, -1);
     const currentPathArray = currentPath.split("/");
