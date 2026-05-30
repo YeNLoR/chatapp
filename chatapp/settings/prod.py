@@ -27,6 +27,15 @@ CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": "redis://redis:6379",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "SOCKET_TIMEOUT": 5.0,
+            "SOCKET_CONNECT_TIMEOUT": 5.0,
+            "CONNECTION_POOL_KWARGS": {
+                "retry_on_timeout": True,
+                "max_connections": 20,
+            },
+        },
     }
 }
 DATABASES = {
