@@ -3,6 +3,7 @@ let peer = null;
 let localStream = null;
 let screenShare = false;
 let camShare = false;
+let connectTimer;
 const activeCalls = {}; // Format: { peerId: callObject }
 const userPeerMap = {}; // Format: { userId: peerId }
 const messageTemplate = document.getElementById("messageTemplate");
@@ -10,7 +11,13 @@ const messageTemplate = document.getElementById("messageTemplate");
 function connectWebsocket() {
   const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";
   chatSocket = new WebSocket(wsProtocol + window.location.host + "/");
+  let pingTimer;
   chatSocket.onopen = () => {
+    if (connectTimer) { clearTimeout(connectTimer) }
+    if (pingTimer) {clearInterval(pingTimer)}
+    pingTimer = setInterval(() => {
+      chatSocket.send(JSON.stringify({type:"ping"}))
+    },30000)
     const currentPath = window.location.pathname.trim().slice(1, -1);
     const currentPathArray = currentPath.split("/");
     if (currentPathArray.length === 3 && currentPathArray[0] === "channel") {
@@ -19,7 +26,7 @@ function connectWebsocket() {
     if (
       currentPathArray.length > 1 &&
       currentPathArray[0] === "channel" &&
-      currentPath[1] !== "friends"
+      currentPathArray[1] !== "friends"
     ) {
       joinServerView(currentPathArray[1]);
     }
@@ -39,6 +46,10 @@ function connectWebsocket() {
       handleSignal(data);
     }
   };
+  chatSocket.onclose = () => {
+    if (pingTimer) clearInterval(pingTimer);
+    connectTimer = setTimeout(() => { connectWebsocket() }, 5000) ;
+  }
 }
 
 function showIncomingCall(data) {

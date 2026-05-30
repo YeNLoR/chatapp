@@ -71,6 +71,8 @@ class RoomConsumer(WebsocketConsumer):
             data = json.loads(text_data)
             if not data.get("type"):
                 return
+            if data["type"] == "ping":
+                self.send(json.dumps({"type": "pong"}))
             handlers = {
                 "server_view.join": self.server_view_join,
                 "server_view.leave": self.server_view_leave,
